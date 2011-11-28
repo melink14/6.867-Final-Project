@@ -30,7 +30,7 @@ public class CuckooSubFBJTAAgent extends CuckooSubAgent implements Serializable 
 
 	public CuckooSubFBJTAAgent(int capacity) {
 		super(capacity);
-		setName("Cuckoo FJA Sub Agent");
+		setName("Cuckoo FBJTA Sub Agent");
 		reset();
 	}
 

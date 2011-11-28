@@ -171,7 +171,7 @@ public static void main(String[] args)
     System.out.println("main.learningAgent = " + learningAgent);
 
 //        Level 0
-    marioAIOptions.setArgs("-ll 150 -ld 3 -le off -ls 13 -lde on -lhb on");
+    marioAIOptions.setArgs("-lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
     float finalScore = LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
 
 //        Level 1

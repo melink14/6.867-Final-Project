@@ -22,7 +22,7 @@ public class CuckooAgentLoader implements Agent {
 		try {
 			long start, stop, elapsed;
 			start = System.currentTimeMillis();
-			FileInputStream is = new FileInputStream("F:\\college\\6867\\project\\benchmark\\best_def_5506.0_6157_3_13_lhb-true_lt-0_13224506");
+			FileInputStream is = new FileInputStream("F:\\college\\6867\\project\\benchmark\\best_def_6392.0_805_5_133829_lhb-false_lt-0_13224532");
 			ObjectInputStream in = new ObjectInputStream(is);
 			agent = (CuckooSubAgent) in.readObject();
 			stop = System.currentTimeMillis();

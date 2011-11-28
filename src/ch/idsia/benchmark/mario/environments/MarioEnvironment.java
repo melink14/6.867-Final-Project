@@ -349,7 +349,7 @@ public BitSet getMergedObservationZZBit(int ZLevelScene, int ZLevelEnemies)
 //                    mergedZZ[row][col] = mario.kind;
             }
             if(res != 0) {
-            	mSet.set(row*receptiveFieldWidth + col + res - 1); // Offset by which grid point then what we saw there.  minus 1 for 0 indexing
+            	mSet.set((row*receptiveFieldWidth + col)*13 + res - 1); // Offset by which grid point then what we saw there.  minus 1 for 0 indexing
             }
         }
     }
@@ -371,8 +371,9 @@ public BitSet getMergedObservationZZBit(int ZLevelScene, int ZLevelEnemies)
             int row = sprite.mapY - levelScene.mario.mapY + mRow;
             int col = sprite.mapX - levelScene.mario.mapX + mCol;
             byte tmp = GeneralizerEnemies.ZLevelGeneralization(sprite.kind, ZLevelEnemies);
-            if (tmp != Sprite.KIND_NONE)
-                mSet.set(row*receptiveFieldWidth + col + res - 1); // Same logic as above
+            if (tmp != Sprite.KIND_NONE) {
+                mSet.set((row*receptiveFieldWidth + col)*13 + tmp - 1); // Same logic as above
+            }
         }
     }
 
