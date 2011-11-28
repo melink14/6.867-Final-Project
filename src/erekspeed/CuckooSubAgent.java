@@ -6,6 +6,7 @@ import ch.idsia.benchmark.mario.environments.Environment;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -19,6 +20,7 @@ import java.util.Random;
 public abstract class CuckooSubAgent implements Agent, Serializable {
 	protected String name;
 	public byte[][] mergedObservation;
+	public BitSet mergedObservationBit;
 	protected int rfheight, rfwidth;
 
 	static final long serialVersionUID = 8633319344130163029L;
@@ -151,7 +153,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 	}
 
 	public void integrateObservation(Environment environment) {
-		mergedObservation = environment.getMergedObservationZZ(1, 1); // Intermediate
+		mergedObservationBit = environment.getMergedObservationZZBit(3, 3); // Intermediate
 	}
 
 	public abstract boolean[] getAction();

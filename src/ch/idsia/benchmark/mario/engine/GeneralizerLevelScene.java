@@ -305,8 +305,7 @@ public static byte ZLevelGeneralization(byte el, int ZLevel)
                 case (-1):
                     return 8; // Princess
             }
-            System.err.println("ZLevelMapElementGeneralization: Unknown value el = " + el + " Possible Level tiles bug; " +
-                    "Please, inform sergey@idsia.ch or julian@togelius.com. Thanks!");
+            System.err.println("ZLevelMapElementGeneralization: Unknown value el = " + el + " Possible Level tiles bug; ");
             return el;
     }
     System.err.println("Unkown ZLevel Z" + ZLevel);

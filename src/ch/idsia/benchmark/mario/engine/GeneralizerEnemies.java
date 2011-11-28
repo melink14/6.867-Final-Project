@@ -117,6 +117,39 @@ public static byte ZLevelGeneralization(byte el, int ZLevel)
             }
             System.err.println("ERROR: Z2 UNKNOWNN el = " + el);
             return 1;
+        case (3):
+            switch (el)
+            {
+                case (Sprite.KIND_COIN_ANIM):
+                case (Sprite.KIND_PARTICLE):
+                case (Sprite.KIND_SPARCLE):
+                case (Sprite.KIND_MARIO):
+                    return Sprite.KIND_NONE;
+                case (Sprite.KIND_FIRE_FLOWER):
+                    return 9; // fire flower
+                case (Sprite.KIND_MUSHROOM):
+                    return 10; // Mushroom
+                case (Sprite.KIND_FIREBALL):
+                    return 11; // fireball
+                case (Sprite.KIND_BULLET_BILL):
+                case (Sprite.KIND_GOOMBA):
+                case (Sprite.KIND_GOOMBA_WINGED):
+                case (Sprite.KIND_GREEN_KOOPA):
+                case (Sprite.KIND_GREEN_KOOPA_WINGED):
+                case (Sprite.KIND_RED_KOOPA):
+                case (Sprite.KIND_RED_KOOPA_WINGED):
+                case (Sprite.KIND_SHELL):
+                case (Sprite.KIND_WAVE_GOOMBA):
+                    return 12; // squishy enemies
+                case (Sprite.KIND_SPIKY):
+                case (Sprite.KIND_ENEMY_FLOWER):
+                case (Sprite.KIND_SPIKY_WINGED):
+                    return 13; // spikey enemeies
+                /*case (Sprite.KIND_PRINCESS):
+                    return Sprite.KIND_PRINCESS;*/
+            }
+            System.err.println("Z3 UNKOWN el = " + el);
+            return el;
     }
     return el; //TODO: Throw unknown ZLevel exception
 }

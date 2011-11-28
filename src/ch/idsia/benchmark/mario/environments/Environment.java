@@ -27,6 +27,8 @@
 
 package ch.idsia.benchmark.mario.environments;
 
+import java.util.BitSet;
+
 import ch.idsia.agents.Agent;
 import ch.idsia.benchmark.mario.engine.Replayer;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
@@ -89,6 +91,8 @@ public int getReceptiveFieldHeight();
 
 
 public byte[][] getMergedObservationZZ(int ZLevelScene, int ZLevelEnemies);
+
+public BitSet getMergedObservationZZBit(int ZLevelScene, int ZLevelEnemies);
 
 public byte[][] getLevelSceneObservationZ(int ZLevelScene);
 
