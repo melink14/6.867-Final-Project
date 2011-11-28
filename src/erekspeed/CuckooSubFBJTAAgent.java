@@ -37,7 +37,7 @@ public class CuckooSubFBJTAAgent extends CuckooSubAgent implements Serializable 
 	}
 
 	public boolean[] getAction() {
-		MapWrapper map = new MapDirTimeWrapper(mergedObservation, wasLeft, timeLeft);
+		MapWrapper map = new MapDirTimeWrapper(mergedObservationBit, wasLeft, timeLeft);
 
 		if (!solution.containsKey(map)) {
 			if (random.nextDouble() < agentRate) {

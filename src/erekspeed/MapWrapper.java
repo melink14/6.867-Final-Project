@@ -3,6 +3,7 @@ package erekspeed;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 
 import java.io.Serializable;
+import java.util.BitSet;
 
 /**
  * User: espeed
@@ -11,7 +12,8 @@ import java.io.Serializable;
  * We wrap the arrays so that I can use them in the hash map.
  */
 public class MapWrapper implements Serializable {
-	private final byte[][] map;
+	private  byte[][] map = new byte[0][0];;
+	private BitSet mapB = new BitSet();
 	public static int rfheight = 0;
 	public static int rfwidth = 0;
 
@@ -19,6 +21,11 @@ public class MapWrapper implements Serializable {
 	protected int cachedHash;
 	static final long serialVersionUID = -1534403799001948431L;
 
+	public MapWrapper(BitSet mapB) {
+		this.mapB = mapB;
+		generateHashB();
+	}
+	
 	public MapWrapper(byte[][] map) {
 		//TODO: Check to see if this calculation is accurate
 		//this.map = new byte[rfheight][rfwidth];
@@ -78,6 +85,9 @@ public class MapWrapper implements Serializable {
 
 		if (other.cachedHash != this.cachedHash)
 			return false;
+		
+		if(other.mapB != this.mapB)
+			return false;
 
 		byte[][] otherMap = other.getMap();
 		for (int i = 0; i < map.length; i++) {
@@ -112,6 +122,11 @@ public class MapWrapper implements Serializable {
 		}
 
 		cachedHash = hash;
+	}
+	
+	protected void
+	generateHashB() {
+		cachedHash = mapB.hashCode();
 	}
 
 	public double

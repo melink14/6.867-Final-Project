@@ -61,6 +61,7 @@ final static int populationSize = 100;
 
 private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAgent learningAgent)
 {
+	marioAIOptions.setVisualization(false);
     LearningTask learningTask = new LearningTask(marioAIOptions); // provides the level
     learningAgent.setEvaluationQuota(LearningTask.getEvaluationQuota());        // limits the number of evaluations per run for LearningAgent
     learningAgent.setLearningTask(learningTask);  // gives LearningAgent access to evaluator via method LearningTask.evaluate(Agent)
@@ -166,7 +167,7 @@ public static void main(String[] args)
     // set up parameters
     MarioAIOptions marioAIOptions = new MarioAIOptions(args);
 //    LearningAgent learningAgent = new MLPESLearningAgent(); // Learning track competition entry goes here
-    LearningAgent learningAgent = new ErekSpeedCuckooAgent();
+    LearningAgent learningAgent = new ErekSpeedCuckooAgent(marioAIOptions);
     System.out.println("main.learningAgent = " + learningAgent);
 
 //        Level 0

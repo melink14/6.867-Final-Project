@@ -1,6 +1,7 @@
 package erekspeed;
 
 import java.io.Serializable;
+import java.util.BitSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +16,7 @@ public class MapDirTimeWrapper extends MapWrapper implements Serializable {
 	private final boolean left;
 	private final int timeLeft;
 
-	public MapDirTimeWrapper(byte[][] map, boolean left, int tl) {
+	public MapDirTimeWrapper(BitSet map, boolean left, int tl) {
 		super(map);
 		cachedHash += (left ? 27017 : 48299);
 		cachedHash += tl * 27357;
