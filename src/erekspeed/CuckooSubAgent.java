@@ -53,6 +53,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 	public HashMap<MapWrapper, boolean[]> solution;
 
 	protected float fitness;
+	public String info;
 
 	public CuckooSubAgent(int capacity) {
 		setName("Cuckoo Random Sub Agent");
@@ -154,6 +155,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 
 	public void integrateObservation(Environment environment) {
 		mergedObservationBit = environment.getMergedObservationZZBit(3, 3); // Intermediate
+		//info = environment.getEvaluationInfoAsString();
 	}
 
 	public abstract boolean[] getAction();

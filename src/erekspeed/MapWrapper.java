@@ -3,6 +3,7 @@ package erekspeed;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.BitSet;
 
 /**
@@ -86,7 +87,7 @@ public class MapWrapper implements Serializable {
 		if (other.cachedHash != this.cachedHash)
 			return false;
 		
-		if(other.mapB != this.mapB)
+		if(!other.mapB.equals(this.mapB))
 			return false;
 
 		byte[][] otherMap = other.getMap();
@@ -127,6 +128,10 @@ public class MapWrapper implements Serializable {
 	protected void
 	generateHashB() {
 		cachedHash = mapB.hashCode();
+	}
+	
+	public String toString() {
+		return Arrays.deepToString(map);
 	}
 
 	public double
