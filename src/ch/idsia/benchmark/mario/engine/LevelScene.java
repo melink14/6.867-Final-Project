@@ -357,11 +357,11 @@ public void bump(int x, int y, boolean canBreakBricks)
 
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_SPECIAL) > 0)
         {
-            if (randomGen.nextInt(5) == 0 && level.difficulty > 4)
-            {
-                addSprite(new GreenMushroom(this, x * cellSize + 8, y * cellSize + 8));
-                ++level.counters.greenMushrooms;
-            } else
+//            if (randomGen.nextInt(5) == 0 && level.difficulty > 4)
+//            {
+//                addSprite(new GreenMushroom(this, x * cellSize + 8, y * cellSize + 8));
+//                ++level.counters.greenMushrooms;
+//            } else
             {
                 if (!Mario.large)
                 {

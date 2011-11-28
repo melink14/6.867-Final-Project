@@ -41,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -321,6 +322,61 @@ public byte[][] getMergedObservationZZ(int ZLevelScene, int ZLevelEnemies)
     }
 
     return mergedZZ;
+}
+
+public BitSet getMergedObservationZZBit(int ZLevelScene, int ZLevelEnemies)
+{
+//    int MarioXInMap = (int) mario.x / cellSize;
+//    int MarioYInMap = (int) mario.y / cellSize;
+
+//    if (MarioXInMap != (int) mario.x / cellSize ||MarioYInMap != (int) mario.y / cellSize )
+//        throw new Error("WRONG mario x or y pos");
+	BitSet mSet = new BitSet(receptiveFieldHeight*receptiveFieldWidth*13);
+    int mCol = marioEgoPos[1];
+    int mRow = marioEgoPos[0];
+    byte res = 0;
+    for (int y = levelScene.mario.mapY - mRow/*receptiveFieldHeight / 2*/, row = 0; y <= levelScene.mario.mapY + (receptiveFieldHeight - mRow - 1)/*receptiveFieldHeight / 2*/; y++, row++)
+    {
+        for (int x = levelScene.mario.mapX - mCol/*receptiveFieldWidth / 2*/, col = 0; x <= levelScene.mario.mapX + (receptiveFieldWidth - mCol - 1)/*receptiveFieldWidth / 2*/; x++, col++)
+        {
+            if (x >= 0 && x < levelScene.level.xExit && y >= 0 && y < levelScene.level.height)
+            {
+                res = GeneralizerLevelScene.ZLevelGeneralization(levelScene.level.map[x][y], ZLevelScene);
+                
+            } else {
+                res = 0;
+//                if (x == MarioXInMap && y == MarioYInMap)
+//                    mergedZZ[row][col] = mario.kind;
+            }
+            if(res != 0) {
+            	mSet.set(row*col + res - 1); // Offset by which grid point then what we saw there.  minus 1 for 0 indexing
+            }
+        }
+    }
+//        for (int w = 0; w < mergedZZ.length; w++)
+//            for (int h = 0; h < mergedZZ[0].length; h++)
+//                mergedZZ[w][h] = -1;
+    for (Sprite sprite : sprites)
+    {
+        if (sprite.isDead() || sprite.kind == levelScene.mario.kind)
+            continue;
+        if (sprite.mapX >= 0 &&
+                sprite.mapX >= levelScene.mario.mapX - mCol &&
+                sprite.mapX <= levelScene.mario.mapX + (receptiveFieldWidth - mCol - 1) &&
+                sprite.mapY >= 0 &&
+                sprite.mapY >= levelScene.mario.mapY - mRow &&
+                sprite.mapY <= levelScene.mario.mapY + (receptiveFieldHeight - mRow - 1) &&
+                sprite.kind != Sprite.KIND_PRINCESS)
+        {
+            int row = sprite.mapY - levelScene.mario.mapY + mRow;
+            int col = sprite.mapX - levelScene.mario.mapX + mCol;
+            byte tmp = GeneralizerEnemies.ZLevelGeneralization(sprite.kind, ZLevelEnemies);
+            if (tmp != Sprite.KIND_NONE)
+                mSet.set(row*col + tmp -1); // Same logic as above
+        }
+    }
+
+    return mSet;
 }
 
 public List<String> getObservationStrings(boolean Enemies, boolean LevelMap,

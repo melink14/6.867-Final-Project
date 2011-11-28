@@ -120,7 +120,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 			}
 		}
 
-
+		System.out.println(map.size());
 		return map;
 	}
 

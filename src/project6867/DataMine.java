@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ch.idsia.scenarios.champ;
+package project6867;
 
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
@@ -47,7 +47,7 @@ import erekspeed.ErekSpeedCuckooAgent;
  * http://www.marioai.org/learning-track
  */
 
-public final class LearningTrack
+public final class DataMine
 {
 final static long numberOfTrials = 1000;
 final static boolean scoring = false;
@@ -170,8 +170,8 @@ public static void main(String[] args)
     System.out.println("main.learningAgent = " + learningAgent);
 
 //        Level 0
-    marioAIOptions.setArgs("-ll 150 -ld 3 -le off -ls 13 -lde on -lhb on");
-    float finalScore = LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
+    marioAIOptions.setArgs("-ll 150 -lg on");
+    float finalScore = DataMine.evaluateSubmission(marioAIOptions, learningAgent);
 
 //        Level 1
 //    marioAIOptions = new MarioAIOptions(args);

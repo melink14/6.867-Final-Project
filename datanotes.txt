@@ -1,0 +1,32 @@
+Ideas for data generation
+
+intermediate award just final reward at that point.
+
+Final score is intermediate reward plus final score.
+
+Keep track of each the scores and then average them after all data is collected.
+Chance of duplicates is very small outside of individual runs.
+
+Store Data:
+
+empty 0
+Brick 1
+unbreakable Brick 2
+coin 3
+border (can't pass) 2
+cannon muzzle 4
+cannon trunk 5
+flower pot 6
+border/hill can pass 7
+princess 8
+fire flower 9
+mushroom 10
+fireball 11
+goomba 12
+spiky 13
+
+Change the whole system to use BitSetS.
+
+Change the observation functions.
+Keep mapwrapper the same.  Then during saving, just have to iterate over it.
+Or change everything to BitSet, return bitset during observation.
