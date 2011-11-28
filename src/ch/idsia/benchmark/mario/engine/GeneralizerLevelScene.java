@@ -222,6 +222,92 @@ public static byte ZLevelGeneralization(byte el, int ZLevel)
                     return PRINCESS;
             }
             return 1;  // everything else is "something", so it is 1
+        case (3):
+            switch (el)
+            {
+                case 16:  // brick, simple, without any surprise.
+                case 17:  // brick with a hidden coin
+                case 18:  // brick with a hidden flower
+                case 21:       // question brick, contains coin
+                case 22:       // question brick, contains flower/mushroom
+                case 23:       // question brick, N coins inside. prevents cheating
+                    return 1; // any brick
+                case 1:   // hidden block
+                case (-108):
+                case (-107):
+                case (-106):
+                case (15): // Sparcle, irrelevant
+                case (61): // ladder
+                case (93): // Top of ladder
+                    return 0;
+                case (34):
+                    return 3; // Coin
+                case (-128):
+                case (-127):
+                case (-126):
+                case (-125):
+                case (-120):
+                case (-119):
+                case (-118):
+                case (-117):
+                case (-116):
+                case (-115):
+                case (-114):
+                case (-113):
+                case (-112):
+                case (-110):
+                case (-109):
+                case (-104):
+                case (-103):
+                case (-102):
+                case (-101):
+                case (-100):
+                case (-99):
+                case (-98):
+                case (-97):
+                case (-96):
+                case (-95):
+                case (-94):
+                case (-93):
+                case (-69):
+                case (-65):
+                case (-88):
+                case (-87):
+                case (-86):
+                case (-85):
+                case (-84):
+                case (-83):
+                case (-82):
+                case (-81):
+                case (-77):
+                case (-111):
+                case (4):  // kicked hidden brick
+                case (9):
+                    return 2;   // border, cannot pass through, can stand on
+//                    case(9):
+//                        return -12; // hard formation border. Pay attention!
+                case (-124):
+                case (-123):
+                case (-122):
+                case (-76):
+                case (-74):
+                    return 7; // half-border, can jump through from bottom and can stand on
+                case (10):
+                case (11):
+                case (26):
+                case (27): //flower pot
+                	return 6;
+                case (14):
+                	return 4; // Cannon muzzle
+                case (30):
+                case (46): // canon
+                    return 5;  // cannon trunk
+                case (-1):
+                    return 8; // Princess
+            }
+            System.err.println("ZLevelMapElementGeneralization: Unknown value el = " + el + " Possible Level tiles bug; " +
+                    "Please, inform sergey@idsia.ch or julian@togelius.com. Thanks!");
+            return el;
     }
     System.err.println("Unkown ZLevel Z" + ZLevel);
     return el; //TODO: Throw unknown ZLevel exception

@@ -151,7 +151,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 	}
 
 	public void integrateObservation(Environment environment) {
-		mergedObservation = environment.getMergedObservationZZ(0, 0);
+		mergedObservation = environment.getMergedObservationZZ(1, 1); // Intermediate
 	}
 
 	public abstract boolean[] getAction();
