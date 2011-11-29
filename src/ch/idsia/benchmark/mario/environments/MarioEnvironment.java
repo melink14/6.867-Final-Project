@@ -732,6 +732,39 @@ private void computeEvaluationInfo()
     evaluationInfo.bytecodeInstructions = PunctualJudge.getCounter();
 }
 
+@Override
+public EvaluationInfo getIntermediateEval() {
+    evaluationInfo.marioStatus = levelScene.getMarioStatus();
+    evaluationInfo.flowersDevoured = Mario.flowersDevoured;
+    evaluationInfo.distancePassedPhys = (int) levelScene.mario.x;
+    evaluationInfo.distancePassedCells = levelScene.mario.mapX;
+//     evaluationInfo.totalLengthOfLevelCells = levelScene.level.getWidthCells();
+//     evaluationInfo.totalLengthOfLevelPhys = levelScene.level.getWidthPhys();
+    evaluationInfo.timeSpent = levelScene.getTimeSpent();
+    evaluationInfo.timeLeft = levelScene.getTimeLeft();
+    evaluationInfo.coinsGained = Mario.coins;
+    evaluationInfo.totalNumberOfCoins = levelScene.level.counters.coinsCount;
+    evaluationInfo.totalNumberOfHiddenBlocks = levelScene.level.counters.hiddenBlocksCount;
+    evaluationInfo.totalNumberOfFlowers = levelScene.level.counters.flowers;
+    evaluationInfo.totalNumberOfMushrooms = levelScene.level.counters.mushrooms;
+    evaluationInfo.totalNumberOfCreatures = levelScene.level.counters.creatures;
+    evaluationInfo.marioMode = levelScene.getMarioMode();
+    evaluationInfo.mushroomsDevoured = Mario.mushroomsDevoured;
+    evaluationInfo.killsTotal = levelScene.getKillsTotal();
+    evaluationInfo.killsByStomp = levelScene.getKillsByStomp();
+    evaluationInfo.killsByFire = levelScene.getKillsByFire();
+    evaluationInfo.killsByShell = levelScene.getKillsByShell();
+    evaluationInfo.hiddenBlocksFound = Mario.hiddenBlocksFound;
+    evaluationInfo.collisionsWithCreatures = Mario.collisionsWithCreatures;
+    evaluationInfo.Memo = levelScene.memo;
+    evaluationInfo.levelLength = levelScene.level.length;
+    evaluationInfo.marioTraceFileName = marioTraceFile;
+    evaluationInfo.marioTrace = levelScene.level.marioTrace;
+    evaluationInfo.greenMushroomsDevoured = Mario.greenMushroomsDevoured;
+    evaluationInfo.bytecodeInstructions = PunctualJudge.getCounter();
+	return evaluationInfo;
+}
+
 public void setAgent(Agent agent)
 {
     this.agent = agent;
@@ -793,6 +826,8 @@ public void saveLastRun(String filename)
         }
     }
 }
+
+
 
 //public void setRecording(boolean isRecording)
 //{

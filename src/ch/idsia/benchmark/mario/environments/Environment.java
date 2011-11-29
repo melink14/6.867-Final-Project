@@ -178,6 +178,8 @@ public int getTimeSpent();
 public byte[][] getScreenCapture();
 
 void saveLastRun(String filename);
+
+public EvaluationInfo getIntermediateEval();
 }
 
 

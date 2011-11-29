@@ -26,11 +26,11 @@ public class CuckooSubFBJTAAgent extends CuckooSubAgent implements Serializable 
 	private int timeLeft;
 //TODO: always run forward at the edge of a cliff.
 
-	private int mode;
 
 	public CuckooSubFBJTAAgent(int capacity) {
 		super(capacity);
 		setName("Cuckoo FBJTA Sub Agent");
+		useBit = true;
 		reset();
 	}
 
@@ -68,7 +68,6 @@ public class CuckooSubFBJTAAgent extends CuckooSubAgent implements Serializable 
 
 	public void integrateObservation(Environment environment) {
 		timeLeft = environment.getMarioState()[10];
-		mode = environment.getMarioState()[1];
 		super.integrateObservation(environment);
 		agent.integrateObservation(environment);
 	}

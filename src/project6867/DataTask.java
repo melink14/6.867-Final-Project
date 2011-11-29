@@ -27,17 +27,17 @@
 
 package project6867;
 
-import ch.idsia.agents.Agent;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ch.idsia.benchmark.mario.engine.GlobalOptions;
-import ch.idsia.benchmark.mario.environments.Environment;
-import ch.idsia.benchmark.mario.environments.MarioEnvironment;
-import ch.idsia.benchmark.tasks.Task;
+import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
-import ch.idsia.tools.punj.PunctualJudge;
-import ch.idsia.utils.statistics.StatisticalSummary;
-
-import java.util.Vector;
+import erekspeed.ActionWrapper;
+import erekspeed.CuckooSubAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,20 +46,14 @@ import java.util.Vector;
  * Date: Mar 14, 2010 Time: 4:47:33 PM
  */
 
-public class DataTask implements Task
+public class DataTask extends LearningTask
 {
-protected final static Environment environment = MarioEnvironment.getInstance();
-private Agent agent;
-protected MarioAIOptions options;
-private long COMPUTATION_TIME_BOUND = 42; // stands for prescribed  FPS 24.
-private String name = getClass().getSimpleName();
-private EvaluationInfo evaluationInfo;
 
-private Vector<StatisticalSummary> statistics = new Vector<StatisticalSummary>();
+private Map<BitSet, Map<ActionWrapper, List<DataFitness> > > dataMap = new HashMap<BitSet, Map<ActionWrapper, List<DataFitness> > >();
 
 public DataTask(MarioAIOptions marioAIOptions)
 {
-    this.setOptionsAndReset(marioAIOptions);
+   super(marioAIOptions);
 }
 
 /**
@@ -72,16 +66,28 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
     for (int r = 0; r < repetitionsOfSingleEpisode; ++r)
     {
         this.reset();
+        CuckooSubAgent myAgent = (CuckooSubAgent)agent;
         while (!environment.isLevelFinished())
         {
             environment.tick();
             if (!GlobalOptions.isGameplayStopped)
             {
                 c = System.currentTimeMillis();
+                
                 agent.integrateObservation(environment);
-                agent.giveIntermediateReward(environment.getIntermediateReward());
-
+                BitSet data = myAgent.mergedObservationBit;
                 boolean[] action = agent.getAction();
+                ActionWrapper wrap = new ActionWrapper(action);
+                
+                agent.giveIntermediateReward(environment.getIntermediateReward());
+                
+                float intFit = environment.getIntermediateEval().computeWeightedFitness();
+                
+                DataFitness fit = new DataFitness(false, intFit);
+                recordData(data, wrap, fit); 
+                
+                
+                
                 if (System.currentTimeMillis() - c > COMPUTATION_TIME_BOUND)
                     return false;
 //                System.out.println("action = " + Arrays.toString(action));
@@ -92,79 +98,32 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         environment.closeRecorder(); //recorder initialized in environment.reset
         environment.getEvaluationInfo().setTaskName(name);
         this.evaluationInfo = environment.getEvaluationInfo().clone();
+        updateData(evaluationInfo.computeWeightedFitness());
     }
 
     return true;
 }
 
-public Environment getEnvironment()
-{
-    return environment;
+private void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
+	if(dataMap.containsKey(data)) {
+		Map<ActionWrapper, List<DataFitness> > actions = dataMap.get(data);
+		if(actions.containsKey(wrap)) {
+			actions.get(wrap).add(fit);
+		}
+	}
+	
 }
 
-public int evaluate(Agent controller)
-{
-    return 0;
-}
-
-public void setOptionsAndReset(MarioAIOptions options)
-{
-    this.options = options;
-    reset();
-}
-
-public void setOptionsAndReset(final String options)
-{
-    this.options.setArgs(options);
-    reset();
-}
-
-public void doEpisodes(int amount, boolean verbose, final int repetitionsOfSingleEpisode)
-{
-    for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
-    {
-        statistics.addElement(new StatisticalSummary());
-    }
-    for (int i = 0; i < amount; ++i)
-    {
-        this.reset();
-        this.runSingleEpisode(repetitionsOfSingleEpisode);
-        if (verbose)
-            System.out.println(environment.getEvaluationInfoAsString());
-
-        for (int j = 0; j < EvaluationInfo.numberOfElements; j++)
-        {
-            statistics.get(j).add(environment.getEvaluationInfoAsInts()[j]);
-        }
-    }
-
-    System.out.println(statistics.get(3).toString());
-}
-
-public boolean isFinished()
-{
-    return false;
-}
-
-public void reset()
-{
-    agent = options.getAgent();
-    environment.reset(options);
-    agent.reset();
-    agent.setObservationDetails(environment.getReceptiveFieldWidth(),
-            environment.getReceptiveFieldHeight(),
-            environment.getMarioEgoPos()[0],
-            environment.getMarioEgoPos()[1]);
-}
-
-public String getName()
-{
-    return name;
-}
-
-public void printStatistics()
-{
-    System.out.println(evaluationInfo.toString());
+private void updateData(float fitness) {
+	for( BitSet d : dataMap.keySet()) {
+		for( ActionWrapper act : dataMap.get(d).keySet() ) {
+			for(DataFitness df : dataMap.get(d).get(act)){
+				if(df.hasVisited()) {
+					df.add(fitness);
+				}
+			}
+		}
+	}
 }
 
 public EvaluationInfo getEvaluationInfo()
@@ -174,14 +133,3 @@ public EvaluationInfo getEvaluationInfo()
 }
 
 }
-
-//            start timer
-//            long tm = System.currentTimeMillis();
-
-//            System.out.println("System.currentTimeMillis() - tm > COMPUTATION_TIME_BOUND = " + (System.currentTimeMillis() - tm ));
-//            if (System.currentTimeMillis() - tm > COMPUTATION_TIME_BOUND)
-//            {
-////                # controller disqualified on this level
-//                System.out.println("Agent is disqualified on this level");
-//                return false;
-//            }

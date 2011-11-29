@@ -118,10 +118,12 @@ public class ErekSpeedCuckooAgent implements LearningAgent {
 
 		// This value sets the number of bad nests to replace.
 		int repN = 1;//(int)(n*pa);
+		
+		int fitness = 1;
 
 		// We generate a new egg during the first part of the algorithm
 		// Do some bookkeeping and use levy flights to make a new agent.
-		while(curEvals < maxEvals) {
+		while(fitness != 0) {
 			genCount++;
 			if ((genCount % 100) == 0) {
 				System.out.println("Generation:" + genCount);
@@ -133,7 +135,7 @@ public class ErekSpeedCuckooAgent implements LearningAgent {
 			CuckooSubAgent baseAgent = nests.get(random.nextInt(n));
 			CuckooSubAgent newAgent = levyFlight(baseAgent, 10.0);
 
-			int fitness = lTask.evaluate(newAgent);
+			fitness = lTask.evaluate(newAgent);
 			curEvals++;
 			newAgent.setFitness(fitness);
 

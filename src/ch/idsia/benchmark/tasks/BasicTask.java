@@ -48,13 +48,13 @@ import java.util.Vector;
 public class BasicTask implements Task
 {
 protected final static Environment environment = MarioEnvironment.getInstance();
-private Agent agent;
+protected Agent agent;
 protected MarioAIOptions options;
-private long COMPUTATION_TIME_BOUND = 42; // stands for prescribed  FPS 24.
-private String name = getClass().getSimpleName();
-private EvaluationInfo evaluationInfo;
+protected long COMPUTATION_TIME_BOUND = 42; // stands for prescribed  FPS 24.
+protected String name = getClass().getSimpleName();
+protected EvaluationInfo evaluationInfo;
 
-private Vector<StatisticalSummary> statistics = new Vector<StatisticalSummary>();
+protected Vector<StatisticalSummary> statistics = new Vector<StatisticalSummary>();
 
 public BasicTask(MarioAIOptions marioAIOptions)
 {

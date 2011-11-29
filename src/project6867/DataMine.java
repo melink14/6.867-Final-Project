@@ -30,7 +30,6 @@ package project6867;
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
-import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 import erekspeed.ErekSpeedCuckooAgent;
@@ -49,23 +48,17 @@ import erekspeed.ErekSpeedCuckooAgent;
 
 public final class DataMine
 {
-final static long numberOfTrials = 1000;
 final static boolean scoring = false;
-private static int killsSum = 0;
-private static float marioStatusSum = 0;
-private static int timeLeftSum = 0;
-private static int marioModeSum = 0;
-private static boolean detailedStats = false;
-
-final static int populationSize = 100;
 
 private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAgent learningAgent)
 {
-    LearningTask learningTask = new LearningTask(marioAIOptions); // provides the level
-    learningAgent.setEvaluationQuota(LearningTask.getEvaluationQuota());        // limits the number of evaluations per run for LearningAgent
+    DataTask learningTask = new DataTask(marioAIOptions); // records data as it evaluates
+    learningAgent.setEvaluationQuota(0);        // limits the number of evaluations per run for LearningAgent
     learningAgent.setLearningTask(learningTask);  // gives LearningAgent access to evaluator via method LearningTask.evaluate(Agent)
     learningAgent.init();
-    learningAgent.learn(); // launches the training process. numberOfTrials happen here
+    
+    learningAgent.learn(); 
+    
     Agent agent = learningAgent.getBestAgent(); // this agent will be evaluated
 
     // perform the gameplay task on the same level
@@ -93,71 +86,8 @@ private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAge
     }
 
     return f;
-}
 
-private static int oldEval(MarioAIOptions marioAIOptions, LearningAgent learningAgent)
-{
-    boolean verbose = false;
-    float fitness = 0;
-    int disqualifications = 0;
-
-    marioAIOptions.setVisualization(false);
-    //final LearningTask learningTask = new LearningTask(marioAIOptions);
-    //learningTask.setAgent(learningAgent);
-    LearningTask task = new LearningTask(marioAIOptions);
-
-    learningAgent.newEpisode();
-    learningAgent.setLearningTask(task);
-    learningAgent.setEvaluationQuota(numberOfTrials);
-    learningAgent.init();
-
-    for (int i = 0; i < numberOfTrials; ++i)
-    {
-        System.out.println("-------------------------------");
-        System.out.println(i + " trial");
-        //learningTask.reset(marioAIOptions);
-        task.setOptionsAndReset(marioAIOptions);
-        // inform your agent that new episode is coming, pick up next representative in population.
-//            learningAgent.learn();
-        task.runSingleEpisode(1);
-        /*if (!task.runSingleEpisode())  // make evaluation on an episode once
-        {
-            System.out.println("MarioAI: out of computational time per action!");
-            disqualifications++;
-            continue;
-        }*/
-
-        EvaluationInfo evaluationInfo = task.getEnvironment().getEvaluationInfo();
-        float f = evaluationInfo.computeWeightedFitness();
-        if (verbose)
-        {
-            System.out.println("Intermediate SCORE = " + f + "; Details: " + evaluationInfo.toStringSingleLine());
-        }
-        // learn the reward
-        //learningAgent.giveReward(f);
-    }
-    // do some post processing if you need to. In general: select the Agent with highest score.
-    learningAgent.learn();
-    // perform the gameplay task on the same level
-    marioAIOptions.setVisualization(true);
-    Agent bestAgent = learningAgent.getBestAgent();
-    marioAIOptions.setAgent(bestAgent);
-    BasicTask basicTask = new BasicTask(marioAIOptions);
-    basicTask.setOptionsAndReset(marioAIOptions);
-//        basicTask.setAgent(bestAgent);
-    if (!basicTask.runSingleEpisode(1))  // make evaluation on the same episode once
-    {
-        System.out.println("MarioAI: out of computational time per action!");
-        disqualifications++;
-    }
-    EvaluationInfo evaluationInfo = basicTask.getEnvironment().getEvaluationInfo();
-    int f = evaluationInfo.computeWeightedFitness();
-    if (verbose)
-    {
-        System.out.println("Intermediate SCORE = " + f + "; Details: " + evaluationInfo.toStringSingleLine());
-    }
-    System.out.println("LearningTrack final score = " + f);
-    return f;
+   // return 0;
 }
 
 
@@ -165,12 +95,10 @@ public static void main(String[] args)
 {
     // set up parameters
     MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-//    LearningAgent learningAgent = new MLPESLearningAgent(); // Learning track competition entry goes here
-    LearningAgent learningAgent = new ErekSpeedCuckooAgent();
-    System.out.println("main.learningAgent = " + learningAgent);
+    LearningAgent learningAgent = new ErekSpeedCuckooAgent(marioAIOptions);
 
-//        Level 0
-    marioAIOptions.setArgs("-ll 150 -lg on");
+//  no enemies or gaps or blocks
+    marioAIOptions.setArgs("-vis off -ll 128 -le off -lb off -lco off -lca off -ls 14 -ld 15 -ltb off -lg off");
     float finalScore = DataMine.evaluateSubmission(marioAIOptions, learningAgent);
 
 //        Level 1
