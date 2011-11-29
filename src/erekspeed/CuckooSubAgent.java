@@ -22,6 +22,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 	public byte[][] mergedObservation;
 	public BitSet mergedObservationBit;
 	protected int rfheight, rfwidth;
+	protected boolean useBit = false;
 
 	static final long serialVersionUID = 8633319344130163029L;
 
@@ -83,9 +84,6 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 		// A simple array so that I can use foreach
 		boolean[] vals = {true, false};
 
-		// Determines the current integer mapping.
-		// int count = 0;
-
 		// Nested for loops go through each of the important buttons
 		for (boolean left : vals) {
 			ActionWrapper tList = new ActionWrapper(Environment.numberOfKeys);
@@ -117,6 +115,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 							// up what's in the HashMap.  There's a warning here
 							// due to generics and clone()
 							map.add(tList.clone());
+							ActionWrapper.addToHash(tList.clone());
 						}
 					}
 				}
@@ -154,9 +153,13 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 	}
 
 	public void integrateObservation(Environment environment) {
-		mergedObservationBit = environment.getMergedObservationZZBit(3, 3); // Intermediate
-		if(environment.getMarioMode() != 0)
-			mergedObservationBit.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + environment.getMarioMode()-1);
+		if(!useBit)
+			mergedObservation = environment.getMergedObservationZZ(0, 0);
+		else {
+			mergedObservationBit = environment.getMergedObservationZZBit(3, 3); // Intermediate
+			if(environment.getMarioMode() != 0)
+				mergedObservationBit.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + environment.getMarioMode()-1);
+		}
 		//info = environment.getEvaluationInfoAsString();
 	}
 

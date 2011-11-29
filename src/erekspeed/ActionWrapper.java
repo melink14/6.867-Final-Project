@@ -3,6 +3,7 @@ package erekspeed;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * User: espeed
@@ -13,9 +14,16 @@ import java.util.Arrays;
 public class ActionWrapper implements Serializable {
 	static final long serialVersionUID = 567011624892982938L;
 	public boolean[] acts;
+	private int cachedHash = 0;
+	static public int count = 0;
 
 	public ActionWrapper(int size) {
 		acts = new boolean[size];
+	}
+	
+	public ActionWrapper(boolean[] m_acts) {
+		acts = m_acts;
+		generateHashCode();
 	}
 
 	public void add(int idx, boolean val) {
@@ -28,20 +36,52 @@ public class ActionWrapper implements Serializable {
 		return ret;
 	}
 	
+	/**
+	 * Converts an ActionWrapper (boolean array) to an integer value.
+	 * ActionWrapper's int values are assigned a first come first served basis
+	 * @return an integer mapping to this ActionWrapper
+	 */
 	public int getInt() {
-		return ActionWrapper.intValue(acts);
+		Integer ret = intMap.get(this);
+		if(ret == null) {
+			addToHash(this);
+		}
+		
+		return intMap.get(this);
 	}
 	
 	
+	private static HashMap<ActionWrapper, Integer> intMap= new HashMap<ActionWrapper, Integer>();
+	
+	
 	/**
-	 * Taken from http://stackoverflow.com/questions/1528204/casting-a-boolean-array-in-java
-	 * @param array a boolean array to convert to an int.
-	 * @return int value of this binary array
+	 * When creating the set of ActionWrappers, add them to the internal hash to allow 
+	 * converting to intS later.
+	 * @param act
+	 * @param val
 	 */
-	static int intValue(boolean[] array) {
-		return new BigInteger(Arrays.toString(array)
-				.replace("true", "1")
-				.replace("false", "0")
-				.replaceAll("[^01]", ""), 2).intValue();
+	public static void addToHash(ActionWrapper act) {
+		act.generateHashCode();
+		intMap.put(act, count++);
+	}
+	
+	private void generateHashCode() {
+		cachedHash  =  Arrays.hashCode(acts);
+	}
+	
+	public int hashCode() {
+		return cachedHash;
+	}
+	
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+
+		if (o == null || getClass() != o.getClass())
+			return false;
+		
+		ActionWrapper other = (ActionWrapper)o;
+		
+		return cachedHash == other.cachedHash;
 	}
 }
