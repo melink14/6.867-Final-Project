@@ -37,10 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
-import ch.idsia.benchmark.tasks.BasicTask;
-import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 import erekspeed.ActionWrapper;
 import erekspeed.ErekSpeedCuckooAgent;
@@ -65,14 +62,17 @@ final static Random ran = new Random();
 
 private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAgent learningAgent, int fromD, int toD, int numSeeds, String prefix)
 {
+	long start = System.currentTimeMillis();
+	
     DataTask learningTask = new DataTask(marioAIOptions); // records data as it evaluates
     learningAgent.setLearningTask(learningTask);  // gives LearningAgent access to evaluator via method LearningTask.evaluate(Agent)
     
     for(int i = fromD; i <= toD; i++) {
     	marioAIOptions.setLevelDifficulty(i);
     	for(int j = 0; j < numSeeds; j++) {
-    		marioAIOptions.setLevelRandSeed(ran.nextInt());
     		
+    		marioAIOptions.setLevelRandSeed(ran.nextInt());
+    		System.out.println(prefix + ": diff:" + i + " seed:" + marioAIOptions.getLevelRandSeed());
     		learningTask.reset(marioAIOptions);
     		learningAgent.init();
     	    learningAgent.learn();
@@ -85,43 +85,46 @@ private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAge
     
     saveData(data, prefix);
     
+    
+    long stop = System.currentTimeMillis();
+    System.out.println(stop-start);
 
-    Agent agent = learningAgent.getBestAgent(); // this agent will be evaluated
+//    Agent agent = learningAgent.getBestAgent(); // this agent will be evaluated
+//
+//    // perform the gameplay task on the same level
+//    marioAIOptions.setVisualization(true);
+//    System.out.println("LearningTrack best agent = " + agent);
+//    marioAIOptions.setAgent(agent);
+//    BasicTask basicTask = new BasicTask(marioAIOptions);
+//    basicTask.setOptionsAndReset(marioAIOptions);
+//    System.out.println("basicTask = " + basicTask);
+//    System.out.println("agent = " + agent);
+//
+//    boolean verbose = true;
+//
+//    if (!basicTask.runSingleEpisode(1))  // make evaluation on the same episode once
+//    {
+//        System.out.println("MarioAI: out of computational time per action! Agent disqualified!");
+//    }
+//    EvaluationInfo evaluationInfo = basicTask.getEvaluationInfo();
+//    System.out.println(evaluationInfo.toString());
+//
+//    int f = evaluationInfo.computeWeightedFitness();
+//    if (verbose)
+//    {
+//        System.out.println("Intermediate SCORE = " + f + ";\n Details: " + evaluationInfo.toString());
+//    }
+//    
+//    return f;
 
-    // perform the gameplay task on the same level
-    marioAIOptions.setVisualization(true);
-    System.out.println("LearningTrack best agent = " + agent);
-    marioAIOptions.setAgent(agent);
-    BasicTask basicTask = new BasicTask(marioAIOptions);
-    basicTask.setOptionsAndReset(marioAIOptions);
-    System.out.println("basicTask = " + basicTask);
-    System.out.println("agent = " + agent);
-
-    boolean verbose = true;
-
-    if (!basicTask.runSingleEpisode(1))  // make evaluation on the same episode once
-    {
-        System.out.println("MarioAI: out of computational time per action! Agent disqualified!");
-    }
-    EvaluationInfo evaluationInfo = basicTask.getEvaluationInfo();
-    System.out.println(evaluationInfo.toString());
-
-    int f = evaluationInfo.computeWeightedFitness();
-    if (verbose)
-    {
-        System.out.println("Intermediate SCORE = " + f + ";\n Details: " + evaluationInfo.toString());
-    }
-
-    return f;
-
-   // return 0;
+   return 0;
 }
 
 private static Map<BitSet, ActionWrapper> processData(Map<BitSet, Map<ActionWrapper, List<DataFitness>>> rawData) {
 	Map<BitSet, ActionWrapper> ret = new HashMap<BitSet, ActionWrapper>();
 	
 	for(Entry<BitSet, Map<ActionWrapper, List<DataFitness>>> d : rawData.entrySet()) {
-		float bestFitness = Float.MIN_VALUE;
+		float bestFitness = Float.NEGATIVE_INFINITY;
 		ActionWrapper bestAction = null;
 		for(Entry<ActionWrapper, List<DataFitness>> fits : d.getValue().entrySet()) {
 			float curFit = averageFitness(fits.getValue());
@@ -172,8 +175,8 @@ public static void main(String[] args)
 
 //  no enemies or gaps or blocks
     
-    marioAIOptions.setArgs("-vis off -ll 128 -le off -lb on -lco off -lca off -ltb off -lg off");
-    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 3, "basic");
+    marioAIOptions.setArgs("-vis off -ll 50 -le off -lb off -lco off -lca off -ltb off -lg off");
+    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "basic");
 
 //        Level 1
 //    marioAIOptions = new MarioAIOptions(args);

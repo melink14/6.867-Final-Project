@@ -126,8 +126,8 @@ public class ErekSpeedCuckooAgent implements LearningAgent {
 		while(fitness != 0) {
 			genCount++;
 			if ((genCount % 100) == 0) {
-				System.out.println("Generation:" + genCount);
-				System.out.println("best:" + nests.get(n - 1).getFitness());
+				//System.out.println("Generation:" + genCount);
+				//System.out.println("best:" + nests.get(n - 1).getFitness());
 			}
 			
 			// Collections.sort(nests, new FitnessComparator());
@@ -176,7 +176,7 @@ public class ErekSpeedCuckooAgent implements LearningAgent {
 
 	public Agent getBestAgent() {
 		CuckooSubAgent nest = Collections.max(nests, new FitnessComparator());
-		saveNest(nest);
+		//saveNest(nest);
 		return nest;
 	}
 
