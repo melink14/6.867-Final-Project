@@ -27,6 +27,8 @@
 
 package project6867;
 
+import java.util.Random;
+
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
@@ -49,16 +51,26 @@ import erekspeed.ErekSpeedCuckooAgent;
 public final class DataMine
 {
 final static boolean scoring = false;
+final static Random ran = new Random();
 
-private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAgent learningAgent)
+
+private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAgent learningAgent, int fromD, int toD, int numSeeds, String prefix)
 {
     DataTask learningTask = new DataTask(marioAIOptions); // records data as it evaluates
-    learningAgent.setEvaluationQuota(0);        // limits the number of evaluations per run for LearningAgent
     learningAgent.setLearningTask(learningTask);  // gives LearningAgent access to evaluator via method LearningTask.evaluate(Agent)
-    learningAgent.init();
     
-    learningAgent.learn(); 
+    for(int i = fromD; i <= toD; i++) {
+    	marioAIOptions.setLevelDifficulty(i);
+    	for(int j = 0; j < numSeeds; j++) {
+    		marioAIOptions.setLevelRandSeed(ran.nextInt());
+    		
+    		learningTask.reset(marioAIOptions);
+    		learningAgent.init();
+    	    learningAgent.learn();
+    	}
+    }
     
+
     Agent agent = learningAgent.getBestAgent(); // this agent will be evaluated
 
     // perform the gameplay task on the same level
@@ -99,7 +111,7 @@ public static void main(String[] args)
 
 //  no enemies or gaps or blocks
     marioAIOptions.setArgs("-vis off -ll 128 -le off -lb on -lco off -lca off -ltb off -lg off");
-    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 5, "basic");
+    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 3, "basic");
 
 //        Level 1
 //    marioAIOptions = new MarioAIOptions(args);

@@ -21,9 +21,8 @@ public class DataTask extends LearningTask
 {
 
 private Map<BitSet, Map<ActionWrapper, List<DataFitness> > > dataMap = new HashMap<BitSet, Map<ActionWrapper, List<DataFitness> > >();
-
-private int maxEvals = 30000;
-private int refineEvals = 1000;
+private final int maxEvals = 30000;
+private final int refineEvals = 1000;
 private int startRefine = 0;
 private boolean hasWon = false;
 private int curEvals = 0;
@@ -92,13 +91,35 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
 
 public int evaluate(Agent agent)
 {
-    if ((hasWon && curEvals > refineEvals) || curEvals > maxEvals)
+    if ((hasWon && curEvals > startRefine+refineEvals) || curEvals > maxEvals)
         return 0;
     curEvals++;
     options.setAgent(agent);
     environment.reset(options);
     this.runSingleEpisode(1);
     return this.getEvaluationInfo().computeWeightedFitness();
+}
+
+public void reset(MarioAIOptions opts) {
+	curEvals = 0;
+	hasWon = false;
+	startRefine = 0;
+	super.reset(opts);
+}
+
+/**
+ * @return the dataMap
+ */
+public Map<BitSet, Map<ActionWrapper, List<DataFitness>>> getDataMap() {
+	return dataMap;
+}
+
+/**
+ * @param dataMap the dataMap to set
+ */
+public void setDataMap(
+		Map<BitSet, Map<ActionWrapper, List<DataFitness>>> dataMap) {
+	this.dataMap = dataMap;
 }
 
 void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
@@ -131,15 +152,6 @@ void updateData(float fitness, List<DataFitness> d) {
 		df.add(fitness);
 		df.hasVisited();
 	}
-//	for( BitSet d : dataMap.keySet()) {
-//		for( ActionWrapper act : dataMap.get(d).keySet() ) {
-//			for(DataFitness df : dataMap.get(d).get(act)){
-//				if(!df.hasVisited()) {
-//					df.add(fitness);
-//				}
-//			}
-//		}
-//	}
 }
 
 }
