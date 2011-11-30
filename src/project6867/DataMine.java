@@ -98,14 +98,14 @@ public static void main(String[] args)
     LearningAgent learningAgent = new ErekSpeedCuckooAgent(marioAIOptions);
 
 //  no enemies or gaps or blocks
-    marioAIOptions.setArgs("-vis off -ll 128 -le off -lb off -lco off -lca off -ls 14 -ld 15 -ltb off -lg off");
-    float finalScore = DataMine.evaluateSubmission(marioAIOptions, learningAgent);
+    marioAIOptions.setArgs("-vis off -ll 128 -le off -lb on -lco off -lca off -ltb off -lg off");
+    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 5, "basic");
 
 //        Level 1
 //    marioAIOptions = new MarioAIOptions(args);
 //    marioAIOptions.setAgent(learningAgent);
-//    marioAIOptions.setArgs("-lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
-//    finalScore += LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
+//    marioAIOptions.setArgs("-vis off -lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
+//    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 5, "gaps");
 
 //        Level 2
 //    marioAIOptions = new MarioAIOptions(args);
@@ -127,7 +127,6 @@ public static void main(String[] args)
 //    marioAIOptions.setArgs("-le off -lhs on -lde on -ld 5 -ls 1332656");
 //    finalScore += LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
 
-    System.out.println("finalScore = " + finalScore);
     System.exit(0);
 }
 }

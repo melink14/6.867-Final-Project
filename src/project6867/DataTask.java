@@ -24,6 +24,7 @@ private Map<BitSet, Map<ActionWrapper, List<DataFitness> > > dataMap = new HashM
 
 private int maxEvals = 30000;
 private int refineEvals = 1000;
+private int startRefine = 0;
 private boolean hasWon = false;
 private int curEvals = 0;
 
@@ -78,8 +79,11 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         environment.closeRecorder(); //recorder initialized in environment.reset
         environment.getEvaluationInfo().setTaskName(name);
         this.evaluationInfo = environment.getEvaluationInfo().clone();
-        if(this.evaluationInfo.marioStatus == 1)
+        if(this.evaluationInfo.marioStatus == 1) {
+        	if(!hasWon) startRefine = curEvals;
         	hasWon = true;
+        }
+     
         updateData(evaluationInfo.computeWeightedFitness(), newPoints);
     }
 

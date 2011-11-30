@@ -42,3 +42,5 @@ Choices:
 What features to include.
 How to rate fitness.  How to choose 'best' class. 
 fitness function
+
+TODO commit gww fix to trunk.

@@ -60,7 +60,7 @@ private int GREEN_KOOPA = 4;
 private int GREEN_KOOPA_WINGED = 5;
 private int SPIKY = 6;
 private int SPIKY_WINGED = 7;
-private int WAVE_GOOMBA = 7;
+private int WAVE_GOOMBA = 8;
 
 private int[] counters = new int[9];
 
