@@ -159,6 +159,7 @@ private static void saveData(Map<BitSet, ActionWrapper> data, String prefix) {
 			output.write(dp.getValue().toString() + " " + dp.getKey().toString());
 			output.newLine();
 		}
+		output.close();
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
@@ -187,19 +188,19 @@ public static void main(String[] args)
 //  just gaps
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
-  marioAIOptions.setArgs("-vis on -ll 50 -lb off -le off -lco off -lca off -ltb off -lg on");
+  marioAIOptions.setArgs("-vis off -ll 50 -lb off -le off -lco off -lca off -ltb off -lg on");
   DataMine.evaluateSubmission(marioAIOptions, learningAgent, 4, 10, 2, "basicgaps");
   
   //enemies blocks
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
-  marioAIOptions.setArgs("-vis on -ll 50 -lb on -lco off -lca off -ltb off -lg off");
+  marioAIOptions.setArgs("-vis off -ll 50 -lb on -lco off -lca off -ltb off -lg off");
   DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "eneimesblocks");
  
   //enemies blocks gaps
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
-  marioAIOptions.setArgs("-vis on -ll 50 -lb on -lco off -lca off -ltb off -lg on");
+  marioAIOptions.setArgs("-vis off -ll 50 -lb on -lco off -lca off -ltb off -lg on");
   DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "eneimesblocksgaps");
 
     System.exit(0);
