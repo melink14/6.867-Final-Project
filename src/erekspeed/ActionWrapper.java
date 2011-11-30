@@ -84,4 +84,9 @@ public class ActionWrapper implements Serializable {
 		
 		return cachedHash == other.cachedHash;
 	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(acts);
+	}
 }

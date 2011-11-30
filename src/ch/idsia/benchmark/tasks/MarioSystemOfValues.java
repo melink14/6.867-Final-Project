@@ -51,6 +51,7 @@ public class MarioSystemOfValues extends SystemOfValues
 {
 final public int distance = 1;
 final public int win = 1024;
+final public int loss = -500;
 final public int mode = 32;
 final public int coins = 16;
 final public int hiddenItems = 24;

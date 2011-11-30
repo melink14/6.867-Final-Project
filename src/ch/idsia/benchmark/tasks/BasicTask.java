@@ -169,6 +169,8 @@ public void printStatistics()
 public EvaluationInfo getEvaluationInfo()
 {
 //    System.out.println("evaluationInfo = " + evaluationInfo);
+	if(evaluationInfo == null)
+		evaluationInfo = environment.getEvaluationInfo().clone();
     return evaluationInfo;
 }
 

@@ -27,6 +27,8 @@
 
 package project6867;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +36,6 @@ import java.util.Map;
 
 import ch.idsia.benchmark.mario.engine.GlobalOptions;
 import ch.idsia.benchmark.tasks.LearningTask;
-import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 import erekspeed.ActionWrapper;
 import erekspeed.CuckooSubAgent;
@@ -67,6 +68,7 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
     {
         this.reset();
         CuckooSubAgent myAgent = (CuckooSubAgent)agent;
+        float prevFit = 0;
         while (!environment.isLevelFinished())
         {
             environment.tick();
@@ -83,7 +85,8 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
                 
                 float intFit = environment.getIntermediateEval().computeWeightedFitness();
                 
-                DataFitness fit = new DataFitness(false, intFit);
+                DataFitness fit = new DataFitness(false, Math.signum(intFit-prevFit)*(float)Math.pow(intFit - prevFit, 2));
+                prevFit = intFit;
                 recordData(data, wrap, fit); 
                 
                 
@@ -104,32 +107,40 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
     return true;
 }
 
-private void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
+void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
+	Map<ActionWrapper, List<DataFitness> > actions;
 	if(dataMap.containsKey(data)) {
-		Map<ActionWrapper, List<DataFitness> > actions = dataMap.get(data);
-		if(actions.containsKey(wrap)) {
-			actions.get(wrap).add(fit);
-		}
+		actions = dataMap.get(data);
+		System.out.println("dup1" + Arrays.deepToString(actions.keySet().toArray()));
+	}
+	else {
+		Map<ActionWrapper, List<DataFitness> > tMap = new HashMap<ActionWrapper, List<DataFitness> >();
+		dataMap.put(data, tMap);
+		actions = tMap;
+		
+	}
+	if(actions.containsKey(wrap)) {
+		actions.get(wrap).add(fit);
+		System.out.println("dup2 " + Arrays.deepToString(actions.get(wrap).toArray()));
+	}
+	else {
+		List<DataFitness> l = new ArrayList<DataFitness>();
+		l.add(fit);
+		actions.put(wrap, l);
 	}
 	
 }
 
-private void updateData(float fitness) {
+void updateData(float fitness) {
 	for( BitSet d : dataMap.keySet()) {
 		for( ActionWrapper act : dataMap.get(d).keySet() ) {
 			for(DataFitness df : dataMap.get(d).get(act)){
-				if(df.hasVisited()) {
+				if(!df.hasVisited()) {
 					df.add(fitness);
 				}
 			}
 		}
 	}
-}
-
-public EvaluationInfo getEvaluationInfo()
-{
-//    System.out.println("evaluationInfo = " + evaluationInfo);
-    return evaluationInfo;
 }
 
 }
