@@ -29,9 +29,9 @@ public class MapWrapper implements Serializable {
 	
 	public MapWrapper(byte[][] map) {
 		//TODO: Check to see if this calculation is accurate
-		//this.map = new byte[rfheight][rfwidth];
+		this.map = new byte[rfheight][rfwidth];
 		//rfwidth and height aren't being set
-		this.map = new byte[map.length][map[0].length];
+		//this.map = new byte[map.length][map[0].length];
 
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[i].length; j++) {

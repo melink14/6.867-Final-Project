@@ -178,31 +178,29 @@ public static void main(String[] args)
     marioAIOptions.setArgs("-vis off -ll 50 -le off -lb off -lco off -lca off -ltb off -lg off");
     DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "basic");
 
-//        Level 1
-//    marioAIOptions = new MarioAIOptions(args);
-//    marioAIOptions.setAgent(learningAgent);
-//    marioAIOptions.setArgs("-vis off -lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
-//    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 5, "gaps");
+//    just enemies
+    marioAIOptions = new MarioAIOptions(args);
+    marioAIOptions.setAgent(learningAgent);
+    marioAIOptions.setArgs("-vis off -ll 50 -lb off -lco off -lca off -ltb off -lg off");
+    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "basicenemies");
 
-//        Level 2
-//    marioAIOptions = new MarioAIOptions(args);
-//    marioAIOptions.setArgs("-lde on -i on -ld 30 -ls 133434");
-//    finalScore += LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
-//
-////        Level 3
-//    marioAIOptions = new MarioAIOptions(args);
-//    marioAIOptions.setArgs("-lde on -i on -ld 30 -ls 133434 -lhb on");
-//    finalScore += LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
-//
-////        Level 4
-//    marioAIOptions = new MarioAIOptions(args);
-//    marioAIOptions.setArgs("-lla on -le off -lhs on -lde on -ld 5 -ls 1332656");
-//    finalScore += LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
-//
-//    // Level 5 (bonus level)
-//    marioAIOptions = new MarioAIOptions(args);
-//    marioAIOptions.setArgs("-le off -lhs on -lde on -ld 5 -ls 1332656");
-//    finalScore += LearningTrack.evaluateSubmission(marioAIOptions, learningAgent);
+//  just gaps
+  marioAIOptions = new MarioAIOptions(args);
+  marioAIOptions.setAgent(learningAgent);
+  marioAIOptions.setArgs("-vis on -ll 50 -lb off -le off -lco off -lca off -ltb off -lg on");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 4, 10, 2, "basicgaps");
+  
+  //enemies blocks
+  marioAIOptions = new MarioAIOptions(args);
+  marioAIOptions.setAgent(learningAgent);
+  marioAIOptions.setArgs("-vis on -ll 50 -lb on -lco off -lca off -ltb off -lg off");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "eneimesblocks");
+ 
+  //enemies blocks gaps
+  marioAIOptions = new MarioAIOptions(args);
+  marioAIOptions.setAgent(learningAgent);
+  marioAIOptions.setArgs("-vis on -ll 50 -lb on -lco off -lca off -ltb off -lg on");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "eneimesblocksgaps");
 
     System.exit(0);
 }
