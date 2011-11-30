@@ -110,7 +110,9 @@ public int computeWeightedFitness(SystemOfValues sov)
     return
             distancePassedPhys * sov.distance +
                     flowersDevoured * sov.flowerFire +
-                    marioStatus * sov.win +
+                    (marioStatus == 1 ? sov.win : 0) +
+                    (marioStatus == 0 ? sov.loss: 0) +
+                   // marioStatus * sov.win +
                     marioMode * sov.mode +
                     mushroomsDevoured * sov.mushroom +
                     greenMushroomsDevoured * sov.greenMushroom +

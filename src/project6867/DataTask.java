@@ -69,6 +69,7 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         this.reset();
         CuckooSubAgent myAgent = (CuckooSubAgent)agent;
         float prevFit = 0;
+        ArrayList<DataFitness> newPoints = new ArrayList<DataFitness>();
         while (!environment.isLevelFinished())
         {
             environment.tick();
@@ -86,6 +87,7 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
                 float intFit = environment.getIntermediateEval().computeWeightedFitness();
                 
                 DataFitness fit = new DataFitness(false, Math.signum(intFit-prevFit)*(float)Math.pow(intFit - prevFit, 2));
+                newPoints.add(fit);
                 prevFit = intFit;
                 recordData(data, wrap, fit); 
                 
@@ -101,7 +103,7 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         environment.closeRecorder(); //recorder initialized in environment.reset
         environment.getEvaluationInfo().setTaskName(name);
         this.evaluationInfo = environment.getEvaluationInfo().clone();
-        updateData(evaluationInfo.computeWeightedFitness());
+        updateData(evaluationInfo.computeWeightedFitness(), newPoints);
     }
 
     return true;
@@ -111,7 +113,7 @@ void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
 	Map<ActionWrapper, List<DataFitness> > actions;
 	if(dataMap.containsKey(data)) {
 		actions = dataMap.get(data);
-		System.out.println("dup1" + Arrays.deepToString(actions.keySet().toArray()));
+		//System.out.println("dup1" + Arrays.deepToString(actions.keySet().toArray()));
 	}
 	else {
 		Map<ActionWrapper, List<DataFitness> > tMap = new HashMap<ActionWrapper, List<DataFitness> >();
@@ -121,7 +123,7 @@ void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
 	}
 	if(actions.containsKey(wrap)) {
 		actions.get(wrap).add(fit);
-		System.out.println("dup2 " + Arrays.deepToString(actions.get(wrap).toArray()));
+		//System.out.println("dup2 " + Arrays.deepToString(actions.get(wrap).toArray()));
 	}
 	else {
 		List<DataFitness> l = new ArrayList<DataFitness>();
@@ -131,16 +133,21 @@ void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
 	
 }
 
-void updateData(float fitness) {
-	for( BitSet d : dataMap.keySet()) {
-		for( ActionWrapper act : dataMap.get(d).keySet() ) {
-			for(DataFitness df : dataMap.get(d).get(act)){
-				if(!df.hasVisited()) {
-					df.add(fitness);
-				}
-			}
-		}
+void updateData(float fitness, List<DataFitness> d) {
+	
+	for(DataFitness df : d) {
+		df.add(fitness);
+		df.hasVisited();
 	}
+//	for( BitSet d : dataMap.keySet()) {
+//		for( ActionWrapper act : dataMap.get(d).keySet() ) {
+//			for(DataFitness df : dataMap.get(d).get(act)){
+//				if(!df.hasVisited()) {
+//					df.add(fitness);
+//				}
+//			}
+//		}
+//	}
 }
 
 }
