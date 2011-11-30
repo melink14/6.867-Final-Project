@@ -27,6 +27,11 @@
 
 package project6867;
 
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import ch.idsia.agents.Agent;
@@ -34,6 +39,7 @@ import ch.idsia.agents.LearningAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
+import erekspeed.ActionWrapper;
 import erekspeed.ErekSpeedCuckooAgent;
 
 /**
@@ -70,6 +76,12 @@ private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAge
     	}
     }
     
+    Map<BitSet, Map<ActionWrapper, List<DataFitness>>> rawData = learningTask.getDataMap();
+    
+    Map<BitSet, ActionWrapper> data = processData(rawData);
+    
+    
+    
 
     Agent agent = learningAgent.getBestAgent(); // this agent will be evaluated
 
@@ -100,6 +112,37 @@ private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAge
     return f;
 
    // return 0;
+}
+
+private static Map<BitSet, ActionWrapper> processData(Map<BitSet, Map<ActionWrapper, List<DataFitness>>> rawData) {
+	Map<BitSet, ActionWrapper> ret = new HashMap<BitSet, ActionWrapper>();
+	
+	for(Entry<BitSet, Map<ActionWrapper, List<DataFitness>>> d : rawData.entrySet()) {
+		float bestFitness = Float.MIN_VALUE;
+		ActionWrapper bestAction = null;
+		for(Entry<ActionWrapper, List<DataFitness>> fits : d.getValue().entrySet()) {
+			float curFit = averageFitness(fits.getValue());
+			
+			if(curFit > bestFitness) {
+				bestFitness = curFit;
+				bestAction = fits.getKey();
+			}
+		}
+		ret.put(d.getKey(), bestAction);
+	}
+	return ret;
+}
+
+private static float averageFitness(List<DataFitness> vals) {
+	float acc = 0.0f;
+	int n = 0;
+	
+	for(DataFitness df : vals) {
+		acc += df.getFitness();
+		n++;
+	}
+	
+	return acc/n;
 }
 
 
