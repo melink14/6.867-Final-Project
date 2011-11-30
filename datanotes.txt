@@ -30,3 +30,15 @@ Change the whole system to use BitSetS.
 Change the observation functions.
 Keep mapwrapper the same.  Then during saving, just have to iterate over it.
 Or change everything to BitSet, return bitset during observation.
+
+How to store the data as I collected it:
+
+HashMap BitSet to HashMap ActionWrapper to ArrayList
+
+After runs, find average and return 
+
+
+Choices:
+What features to include.
+How to rate fitness.  How to choose 'best' class. 
+fitness function
