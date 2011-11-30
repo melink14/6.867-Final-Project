@@ -3,12 +3,12 @@
 package project6867;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ch.idsia.agents.Agent;
 import ch.idsia.benchmark.mario.engine.GlobalOptions;
 import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
@@ -21,6 +21,11 @@ public class DataTask extends LearningTask
 {
 
 private Map<BitSet, Map<ActionWrapper, List<DataFitness> > > dataMap = new HashMap<BitSet, Map<ActionWrapper, List<DataFitness> > >();
+
+private int maxEvals = 30000;
+private int refineEvals = 1000;
+private boolean hasWon = false;
+private int curEvals = 0;
 
 public DataTask(MarioAIOptions marioAIOptions)
 {
@@ -73,10 +78,23 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         environment.closeRecorder(); //recorder initialized in environment.reset
         environment.getEvaluationInfo().setTaskName(name);
         this.evaluationInfo = environment.getEvaluationInfo().clone();
+        if(this.evaluationInfo.marioStatus == 1)
+        	hasWon = true;
         updateData(evaluationInfo.computeWeightedFitness(), newPoints);
     }
 
     return true;
+}
+
+public int evaluate(Agent agent)
+{
+    if ((hasWon && curEvals > refineEvals) || curEvals > maxEvals)
+        return 0;
+    curEvals++;
+    options.setAgent(agent);
+    environment.reset(options);
+    this.runSingleEpisode(1);
+    return this.getEvaluationInfo().computeWeightedFitness();
 }
 
 void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
