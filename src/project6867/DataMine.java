@@ -27,6 +27,9 @@
 
 package project6867;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +83,7 @@ private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAge
     
     Map<BitSet, ActionWrapper> data = processData(rawData);
     
-    
+    saveData(data, prefix);
     
 
     Agent agent = learningAgent.getBestAgent(); // this agent will be evaluated
@@ -145,6 +148,21 @@ private static float averageFitness(List<DataFitness> vals) {
 	return acc/n;
 }
 
+private static void saveData(Map<BitSet, ActionWrapper> data, String prefix) {
+	BufferedWriter output;
+	try {
+		output = new BufferedWriter(new FileWriter(prefix + ".data", false));
+		for(Entry<BitSet, ActionWrapper> dp : data.entrySet()) {
+			output.write(dp.getValue().toString() + " " + dp.getKey().toString());
+			output.newLine();
+		}
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+
+		
+	
+}
 
 public static void main(String[] args)
 {
@@ -153,6 +171,7 @@ public static void main(String[] args)
     LearningAgent learningAgent = new ErekSpeedCuckooAgent(marioAIOptions);
 
 //  no enemies or gaps or blocks
+    
     marioAIOptions.setArgs("-vis off -ll 128 -le off -lb on -lco off -lca off -ltb off -lg off");
     DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 5, 3, "basic");
 
