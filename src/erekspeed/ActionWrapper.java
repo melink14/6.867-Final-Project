@@ -1,9 +1,9 @@
 package erekspeed;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * User: espeed
@@ -88,5 +88,18 @@ public class ActionWrapper implements Serializable {
 	@Override
 	public String toString() {
 		return Arrays.toString(acts);
+	}
+
+	public static ActionWrapper parseActionWrapper(String string) {
+		StringTokenizer tokens = new StringTokenizer(string, "[ ,]");
+		int max = tokens.countTokens();
+		boolean[] acts = new boolean[max];
+		String token;
+		for(int i = 0; i < max; ++i){
+			token = tokens.nextToken();
+			acts[i] = Boolean.parseBoolean(token);
+		}
+		ActionWrapper aw = new ActionWrapper(acts);
+		return aw;
 	}
 }
