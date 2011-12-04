@@ -1,6 +1,7 @@
 package erekspeed;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -62,7 +63,7 @@ public class ActionWrapper implements Serializable {
 	 */
 	public static void addToHash(ActionWrapper act) {
 		act.generateHashCode();
-		intMap.put(act, count++);
+		intMap.put(act, ActionWrapper.intFromBooleanArray(act.acts));
 	}
 	
 	private void generateHashCode() {
@@ -101,5 +102,29 @@ public class ActionWrapper implements Serializable {
 		}
 		ActionWrapper aw = new ActionWrapper(acts);
 		return aw;
+	}
+	
+	/**
+	 * Only for ActionWrapperS size 6
+	 * @param val
+	 * @return
+	 */
+	public static ActionWrapper parseActionWrapper(int val) {
+		boolean[] ret = new boolean[6];
+		int mask = 1;
+		int buf;
+		int i = 5;
+		while(i >= 0) {
+			buf = val&mask;
+			ret[i--] = (buf == 1);
+		}		
+		return new ActionWrapper(ret);
+	}
+	
+	public static int intFromBooleanArray(boolean[] array) {
+	    return new BigInteger(Arrays.toString(array)
+	                          .replace("true", "1")
+	                          .replace("false", "0")
+	                          .replaceAll("[^01]", ""), 2).intValue();
 	}
 }

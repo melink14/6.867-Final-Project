@@ -115,7 +115,7 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 							// up what's in the HashMap.  There's a warning here
 							// due to generics and clone()
 							map.add(tList.clone());
-							ActionWrapper.addToHash(tList.clone());
+
 						}
 					}
 				}

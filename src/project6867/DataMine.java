@@ -156,7 +156,7 @@ private static void saveData(Map<BitSet, ActionWrapper> data, String prefix) {
 	try {
 		output = new BufferedWriter(new FileWriter(prefix + ".data", false));
 		for(Entry<BitSet, ActionWrapper> dp : data.entrySet()) {
-			output.write(dp.getValue().toString() + " " + dp.getKey().toString());
+			output.write(ActionWrapper.intFromBooleanArray(dp.getValue().acts) + " " + dp.getKey().toString());
 			output.newLine();
 		}
 		output.close();
