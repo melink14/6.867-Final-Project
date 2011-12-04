@@ -45,6 +45,8 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         CuckooSubAgent myAgent = (CuckooSubAgent)agent;
         float prevFit = environment.getIntermediateEval().computeWeightedFitness();
         ArrayList<DataFitness> newPoints = new ArrayList<DataFitness>();
+        Map<BitSet, Map<ActionWrapper, List<DataFitness> > > localMap = new HashMap<BitSet, Map<ActionWrapper, List<DataFitness> > >();
+        
         while (!environment.isLevelFinished())
         {
             environment.tick();
@@ -64,7 +66,8 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
                 DataFitness fit = new DataFitness(false, Math.signum(intFit-prevFit)*(float)Math.pow(intFit - prevFit, 2));
                 newPoints.add(fit);
                 prevFit = intFit;
-                recordData(data, wrap, fit); 
+                recordData(data, wrap, fit, localMap);
+                
                 
                 
                 
@@ -81,13 +84,17 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
         if(this.evaluationInfo.marioStatus == 1) {
         	if(!hasWon) startRefine = curEvals;
         	hasWon = true;
+        	dataMap.putAll(localMap);
+        	updateData(evaluationInfo.computeWeightedFitness(), newPoints);
         }
      
-        updateData(evaluationInfo.computeWeightedFitness(), newPoints);
+        
     }
 
     return true;
 }
+
+
 
 public int evaluate(Agent agent)
 {
@@ -122,15 +129,17 @@ public void setDataMap(
 	this.dataMap = dataMap;
 }
 
-void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
+private void recordData(BitSet data, ActionWrapper wrap, DataFitness fit,
+		Map<BitSet, Map<ActionWrapper, List<DataFitness>>> map) {
+	
 	Map<ActionWrapper, List<DataFitness> > actions;
-	if(dataMap.containsKey(data)) {
-		actions = dataMap.get(data);
+	if(map.containsKey(data)) {
+		actions = map.get(data);
 		//System.out.println("dup1" + Arrays.deepToString(actions.keySet().toArray()));
 	}
 	else {
 		Map<ActionWrapper, List<DataFitness> > tMap = new HashMap<ActionWrapper, List<DataFitness> >();
-		dataMap.put(data, tMap);
+		map.put(data, tMap);
 		actions = tMap;
 		
 	}
@@ -143,6 +152,12 @@ void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
 		l.add(fit);
 		actions.put(wrap, l);
 	}
+	
+}
+
+private void recordData(BitSet data, ActionWrapper wrap, DataFitness fit) {
+	
+	recordData(data, wrap, fit, dataMap);
 	
 }
 
