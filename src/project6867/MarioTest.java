@@ -30,6 +30,9 @@ package project6867;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.javaml.classification.Classifier;
 import project6867.ClassifierTrainer.ClassifierType;
@@ -53,50 +56,45 @@ public final class MarioTest
 	private static MarioAIOptions options;
 	private static BufferedWriter output;
 
+	private static Map<String, String> ops;
+	
 	public static void evaluate(Agent agent) {
-
 		options.setAgent(agent);
 		final BasicTask basicTask = new BasicTask(options);
-		//options.setVisualization(true);
 
 		basicTask.doEpisodes(1, false, 1);
 		EvaluationInfo info = basicTask.getEnvironment().getEvaluationInfo();
 		try {
-			output.write("{" + options.asString() + "-ld"  + 
-					+ options.getLevelDifficulty() + "} " +
+			output.write("{" + ops.get(options.asString().trim()) + "," + options.getLevelDifficulty() + "} "
 					+ info.computeWeightedFitness() + ", "
 					+ info.marioStatus + "\n");
 			output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("\nEvaluationInfo: \n" + basicTask.getEnvironment().getEvaluationInfoAsString());
 	}
 
 
 	public static void main(String[] args)
 	{
-		String pref = "cleansvm20000reduced001nobalance";
-		try{output = new BufferedWriter(new FileWriter(pref + "results.txt"));}catch(IOException e){e.printStackTrace();} 
-		//Classifier c = ClassifierTrainer.getClassifier(ClassifierType.ID, DataType.ONE, null);
-		Agent agent = new MLAgent("reduced.001cleansvm10klinearg0.5c0.01ds20000.out");
-		//Agent agent = new MLAgent(c);
-		String[] ops = {
-				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886"};//, // no enemies, no blocks, no gaps
-//				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le on -ls 31646", // enemies
-//				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg on -le off -ls 16007", // just gaps
-//				"-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg off -ls 19682", //enemies, blocks
-//				"-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg on -ls 79612"}; // enemies, blocks, gaps
-
+		try{output = new BufferedWriter(new FileWriter("NB1k@.1results.txt"));}catch(IOException e){e.printStackTrace();} 
+		Classifier c = ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.ONE, null);
+		Agent agent = new MLAgent(c);
+		ops = new HashMap<String,String>();
+		ops.put("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886", "0,0,0");
+		ops.put("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -ls 31646", "1,0,0");
+		ops.put("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg on -le off -ls 16007", "0,0,1");
+		ops.put("-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg off -ls 19682", "1,1,0");
+		ops.put("-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg on -ls 79612", "1,1,1");
 		for(int diff = 1; diff < 10; diff++){
-			for(String o : ops){
-				options = new MarioAIOptions(args);
-				options.setArgs(o);
-				options.setLevelDifficulty(diff);
-				options.setRecordFile(pref + options.getLevelRandSeed() + "diff" + diff);
-				evaluate(agent);
-			}
-		}		
+	    	for(Entry<String,String> e : ops.entrySet()){
+	    		System.out.println(e.getKey());
+	    		options = new MarioAIOptions(args);
+	    		options.setArgs(e.getKey());
+	    		options.setLevelDifficulty(diff);
+	    		evaluate(agent);
+	    	}
+	    }		
 		try{output.close();}catch(IOException e){e.printStackTrace();}
 		System.exit(0);
 	}
