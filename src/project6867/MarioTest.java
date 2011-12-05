@@ -60,14 +60,15 @@ public final class MarioTest
 		
 		options.setAgent(agent);
 		final BasicTask basicTask = new BasicTask(options);
-		options.setVisualization(true);
+		//options.setVisualization(true);
 
 		basicTask.doEpisodes(1, false, 1);
 		EvaluationInfo info = basicTask.getEnvironment().getEvaluationInfo();
 		try {
-			output.write("{" + options.toString() + "} "
+			output.write("{" + options.asString() + "} "
 					+ info.computeWeightedFitness() + ", "
-					+ info.marioStatus);
+					+ info.marioStatus + "\n");
+			output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,9 +78,9 @@ public final class MarioTest
 
 	public static void main(String[] args)
 	{
-		try{output = new BufferedWriter(new FileWriter("results.txt"));}catch(IOException e){e.printStackTrace();} 
-		//Classifier c = ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.ONE, null);
-		Agent agent = new MLAgent("3KNN12.5k_.01.classifier");
+		try{output = new BufferedWriter(new FileWriter("NB1k@.1results.txt"));}catch(IOException e){e.printStackTrace();} 
+		Classifier c = ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.ONE, null);
+		Agent agent = new MLAgent(c);
 		options = new MarioAIOptions(args);
 		String[] ops = {
 				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886", // no enemies, no blocks, no gaps
@@ -90,11 +91,12 @@ public final class MarioTest
 
 		for(int diff = 1; diff < 10; diff++){
 	    	for(String o : ops){
+	    		options.setArgs(o);
 	    		options.setLevelDifficulty(diff);
 	    		evaluate(agent);
 	    	}
 	    }		
-				
+		try{output.close();}catch(IOException e){e.printStackTrace();}
 		System.exit(0);
 	}
 }
