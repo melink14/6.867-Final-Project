@@ -81,7 +81,6 @@ public final class MarioTest
 		try{output = new BufferedWriter(new FileWriter("NB1k@.1results.txt"));}catch(IOException e){e.printStackTrace();} 
 		Classifier c = ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.ONE, null);
 		Agent agent = new MLAgent(c);
-		options = new MarioAIOptions(args);
 		String[] ops = {
 				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886", // no enemies, no blocks, no gaps
 				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le on -ls 31646", // enemies
@@ -91,6 +90,7 @@ public final class MarioTest
 
 		for(int diff = 1; diff < 10; diff++){
 	    	for(String o : ops){
+	    		options = new MarioAIOptions(args);
 	    		options.setArgs(o);
 	    		options.setLevelDifficulty(diff);
 	    		evaluate(agent);
