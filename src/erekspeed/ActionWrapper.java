@@ -117,6 +117,7 @@ public class ActionWrapper implements Serializable {
 		while(i >= 0) {
 			buf = val&mask;
 			ret[i--] = (buf == 1);
+			val >>= 1;
 		}		
 		return new ActionWrapper(ret);
 	}

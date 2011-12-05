@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import weka.classifiers.trees.REPTree;
 
 import libsvm.LibSVM;
 import net.sf.javaml.classification.Classifier;
@@ -23,16 +27,17 @@ import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
+import net.sf.javaml.tools.weka.WekaClassifier;
 
 public class MarioML {
 
-	private static final int FEATURE_SIZE = 4695;
-	private static final int PER_FEATURE = 1000;
-	private static final int TREES = 500;
+	private static final int FEATURE_SIZE = 4697;
+	private static final int PER_FEATURE = 400;
+	private static final int TREES = 1;
+	private static final float MAX_FRAC = 1f;
 	private static Dataset data;
 	private static HashSet<Integer> features = new HashSet<Integer>(500);
 	private static String output;
-	private static Classifier best;
 
 
 	/**
@@ -49,20 +54,21 @@ public class MarioML {
 		filenames.add("basic.data");
 		filenames.add("basicenemies.data");
 		filenames.add("basicgaps.data");
-		filenames.add("eneimesblocksgaps.data");
-		filenames.add("eneimesblocks.data");
+		filenames.add("enemiesblocksgaps.data");
+		filenames.add("enemiesblocks.data");
 		
-		int datasize = 5000;
+		int datasize = PER_FEATURE*filenames.size();
 	
 		float gamma = .5f;
-		float C = 10f;
-		String kernel = "rbf";
+		float C = .001f;
+		String kernel = "linear";
 		
-		//output = "reduced10svm" + kernel + "g" + gamma + "c" + C + "ds" + datasize +".out";
-		output = "randomforest" + "trees" + TREES + ".out";
-		//MarioML.loadFeatureSpace("forward10percent2500mixedpoints.data");
+		//output = "reduced.01" + kernel + "g" + gamma + "c" + C + "ds" + datasize +".out";
+		output = "reduced.01randomforest" + "trees" + TREES + "data" + datasize + ".out";
+		MarioML.loadFeatureSpace("forward@0.01_5000mixednew.data");
+		
 		Classifier clf = marioml.runRF(filenames);
-		
+		//Classifier clf = marioml.runSVM(filenames, datasize, C, gamma, kernel);
 //		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
 //		
 //		oos.writeObject(clf);
@@ -85,7 +91,7 @@ public class MarioML {
 		long start = System.currentTimeMillis();
 		LibSVM svm = new LibSVM();
 		svm.getParameters().C = c;
-		svm.getParameters().kernel_type = libsvm.svm_parameter.RBF;
+		svm.getParameters().kernel_type = libsvm.svm_parameter.LINEAR;
 		svm.getParameters().gamma = gamma;
 		svm.getParameters().cache_size = 2000;
 		
@@ -97,7 +103,7 @@ public class MarioML {
 		System.out.println(System.currentTimeMillis() - start);
 		
 		start = System.currentTimeMillis();
-		Map<Object, PerformanceMeasure> p = new CrossValidation(svm).crossValidation(data, 2);
+		Map<Object, PerformanceMeasure> p = new CrossValidation(svm).crossValidation(data, 5);
 		System.out.println(System.currentTimeMillis() - start);
 		
 		for(Object o:p.keySet()) {
@@ -126,14 +132,28 @@ public class MarioML {
 		long start = System.currentTimeMillis();
 		RandomForest rf = new RandomForest(TREES, true, FEATURE_SIZE, new Random());
 		
-		rf.buildClassifier(data);
+		REPTree bob = new weka.classifiers.trees.REPTree();
+		//bob.setMaxDepth(4);
+		
+		
+		Classifier sally = new WekaClassifier(bob);
+		sally.buildClassifier(data);
+	
+		
+		//rf.buildClassifier(data);
+//		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
+//		oos.writeObject(rf);
+//		oos.close();
+		
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
-		oos.writeObject(rf);
+		oos.writeObject(bob);
 		oos.close();
+		
+		
 		
 		System.out.println(System.currentTimeMillis() - start);
 		
-		System.out.println(rf.getOutOfBagErrorEstimate());
+		//System.out.println(rf.getOutOfBagErrorEstimate());
 		
 		return rf;
 		
@@ -153,10 +173,13 @@ public class MarioML {
 			Matcher m;
 			String s;
 			Instance feature_vector;
+			Map<Integer, Integer> histo = new HashMap<Integer, Integer>(50);
 			int count = 0;
 			while ((s = r.readLine()) != null) {
 				m = p.matcher(s);
 				if (m.matches()) {
+					if(!addToHisto(Integer.parseInt(m.group(1)), histo))
+						continue;
 					feature_vector = new SparseInstance(FEATURE_SIZE);
 					feature_vector.setClassValue(m.group(1));
 					for(String index : m.group(2).split(", ")){
@@ -173,12 +196,39 @@ public class MarioML {
 						break;
 				}
 			}
+			r.close();
+			System.out.println(histo.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		
+		System.out.println("Finished loading");
 
 	}
 	
+	private static boolean addToHisto(int val, Map<Integer, Integer> histo) {
+		if(!histo.containsKey(val)) {
+			histo.put(val, 1);
+			return true;
+		}
+		else {
+			float acc = 0;
+			for(Entry<Integer,Integer> es : histo.entrySet()) {
+				acc += es.getValue();
+			}
+			if(histo.get(val)/acc > MAX_FRAC)
+				return false;
+			else {
+				histo.put(val, histo.get(val)+1);
+				return true;
+			}
+						
+		}
+		
+	}
+
+
 	private static void loadFeatureSpace(String filename) {
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(filename));

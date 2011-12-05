@@ -13,7 +13,7 @@ import net.sf.javaml.core.SparseInstance;
 import net.sf.javaml.tools.DatasetTools;
 
 public class FeatureSelection {
-	private static int DATA_SIZE = 4000;
+	private static int DATA_SIZE = 1000;
 	private static int FEATURE_SIZE = 4695;
 
 	/*
@@ -89,8 +89,8 @@ public class FeatureSelection {
 				loadFile("basic.data", DATA_SIZE),
 				loadFile("basicenemies.data", DATA_SIZE),
 				loadFile("basicgaps.data", DATA_SIZE),
-				loadFile("eneimesblocks.data", DATA_SIZE),
-				loadFile("eneimesblocksgaps.data", DATA_SIZE));
+				loadFile("enemiesblocks.data", DATA_SIZE),
+				loadFile("enemiesblocksgaps.data", DATA_SIZE));
 		System.out.println(data.size() + " datapoints loaded...");
 		
 		

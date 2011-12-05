@@ -195,13 +195,13 @@ public static void main(String[] args)
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
   marioAIOptions.setArgs("-vis off -ll 50 -lb on -lco off -lca off -ltb off -lg off");
-  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "eneimesblocks");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "enemiesblocks");
  
   //enemies blocks gaps
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
   marioAIOptions.setArgs("-vis off -ll 50 -lb on -lco off -lca off -ltb off -lg on");
-  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "eneimesblocksgaps");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "enemiesblocksgaps");
 
     System.exit(0);
 }

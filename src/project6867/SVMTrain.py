@@ -16,9 +16,9 @@ import sklearn
 
 
 
-DATA_SIZE = 5000
-DATA_SET_SIZE = DATA_SIZE/5
-FEATURE_SIZE = 4695
+DATA_SIZE = 2000
+DATA_SET_SIZE = DATA_SIZE/4
+FEATURE_SIZE = 4697
 
 intmap = {}
 intmapc = 0
@@ -77,9 +77,9 @@ def processSparseData(line):
 
 if __name__ == "__main__":
     
-    filenames= ("../../basicgaps.data","../../basicenemies.data","../../eneimesblocks.data","../../eneimesblocksgaps.data")
+    filenames= ("../../basicenemies.data","../../enemiesblocks.data","../../enemiesblocksgaps.data")
     
-    data, targets = loadFile("../../basic.data")
+    data, targets = loadFile("../../basicgaps.data")
     
     for fn in filenames:
         print fn
@@ -101,10 +101,10 @@ if __name__ == "__main__":
     
     ################################################################################
     # Set the parameters by cross-validation
-    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [.5, .1, .01, .001, 1e-3, 1e-4],
-                         'C': [.001, .01, 1, 10, 100, 1000]}]
+    #tuned_parameters = [{'kernel': ['rbf'], 'gamma': [.5, .1, .01],
+    #                     'C': [.001, .01, 10]}]
     
-#    tuned_parameters = [{'C': [.001, .01, 1, 10, 100, 1000]}]
+    tuned_parameters = [{'C': [.001, .01, 1, 10, 100, 1000]}]
     
     scores = [
         ('precision', precision_score),
@@ -112,8 +112,8 @@ if __name__ == "__main__":
     ]
    # 
     #for score_name, score_func in scores:
-    clf = GridSearchCV(SVC(C=1), tuned_parameters, n_jobs=4)
-    clf.fit(X[train], y[train], cv=StratifiedKFold(y[train], 5), fit_params={"class_weight":"auto", "cache_size":2000})
+    clf = GridSearchCV(LinearSVC(C=1), tuned_parameters, n_jobs=4)
+    clf.fit(X[train], y[train], cv=StratifiedKFold(y[train], 2))
     y_true, y_pred = y[test], clf.predict(X[test])
 
     print "Classification report for the best estimator: "

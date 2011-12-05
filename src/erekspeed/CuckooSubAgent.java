@@ -159,7 +159,14 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 			mergedObservationBit = environment.getMergedObservationZZBit(3, 3); // Intermediate
 			if(environment.getMarioMode() != 0)
 				mergedObservationBit.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + environment.getMarioMode()-1);
+			if(environment.isMarioAbleToJump())
+				mergedObservationBit.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + 2);
+			if(!environment.isMarioOnGround())
+				mergedObservationBit.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + 3);
+				
 		}
+		
+		//System.out.println(mergedObservationBit.toString());
 		//info = environment.getEvaluationInfoAsString();
 	}
 

@@ -58,7 +58,7 @@ public boolean runSingleEpisode(final int repetitionsOfSingleEpisode)
                 BitSet data = myAgent.mergedObservationBit;
                 boolean[] action = agent.getAction();
                 ActionWrapper wrap = new ActionWrapper(action);
-                
+               // System.out.println(ActionWrapper.intFromBooleanArray(wrap.acts));
                 agent.giveIntermediateReward(environment.getIntermediateReward());
                 
                 float intFit = environment.getIntermediateEval().computeWeightedFitness();
