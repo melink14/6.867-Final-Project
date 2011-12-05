@@ -52,9 +52,9 @@ public final class MarioTest
 
 	private static MarioAIOptions options;
 	private static BufferedWriter output;
-	
+
 	public static void evaluate(Agent agent) {
-		
+
 		options.setAgent(agent);
 		final BasicTask basicTask = new BasicTask(options);
 		//options.setVisualization(true);
@@ -76,24 +76,27 @@ public final class MarioTest
 
 	public static void main(String[] args)
 	{
-		try{output = new BufferedWriter(new FileWriter("NB1k@.1results.txt"));}catch(IOException e){e.printStackTrace();} 
-		Classifier c = ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.ONE, null);
-		Agent agent = new MLAgent(c);
+		String pref = "cleansvm20000reduced001nobalance";
+		try{output = new BufferedWriter(new FileWriter(pref + "results.txt"));}catch(IOException e){e.printStackTrace();} 
+		//Classifier c = ClassifierTrainer.getClassifier(ClassifierType.ID, DataType.ONE, null);
+		Agent agent = new MLAgent("reduced.001cleansvm10klinearg0.5c0.01ds20000.out");
+		//Agent agent = new MLAgent(c);
 		String[] ops = {
-				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886", // no enemies, no blocks, no gaps
-				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le on -ls 31646", // enemies
-				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg on -le off -ls 16007", // just gaps
-				"-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg off -le on -ls 19682", //enemies, blocks
-				"-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg on -ls 79612"}; // enemies, blocks, gaps
+				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886"};//, // no enemies, no blocks, no gaps
+//				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le on -ls 31646", // enemies
+//				"-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg on -le off -ls 16007", // just gaps
+//				"-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg off -ls 19682", //enemies, blocks
+//				"-vis off -ll 256 -lb on -lco off -lca off -ltb off -lg on -ls 79612"}; // enemies, blocks, gaps
 
 		for(int diff = 1; diff < 10; diff++){
-	    	for(String o : ops){
-	    		options = new MarioAIOptions(args);
-	    		options.setArgs(o);
-	    		options.setLevelDifficulty(diff);
-	    		evaluate(agent);
-	    	}
-	    }		
+			for(String o : ops){
+				options = new MarioAIOptions(args);
+				options.setArgs(o);
+				options.setLevelDifficulty(diff);
+				options.setRecordFile(pref + options.getLevelRandSeed() + "diff" + diff);
+				evaluate(agent);
+			}
+		}		
 		try{output.close();}catch(IOException e){e.printStackTrace();}
 		System.exit(0);
 	}
