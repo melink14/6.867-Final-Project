@@ -62,7 +62,8 @@ public final class MarioTest
 		basicTask.doEpisodes(1, false, 1);
 		EvaluationInfo info = basicTask.getEnvironment().getEvaluationInfo();
 		try {
-			output.write("{" + options.asString() + "} "
+			output.write("{" + options.asString() + "-ld"  + 
+					+ options.getLevelDifficulty() + "} " +
 					+ info.computeWeightedFitness() + ", "
 					+ info.marioStatus + "\n");
 			output.flush();
