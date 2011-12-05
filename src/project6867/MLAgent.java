@@ -37,6 +37,11 @@ public class MLAgent implements Agent {
 		}
 		setName("ML Agent");
 	}
+	
+	public MLAgent(Classifier c) {
+		clf = c;
+		setName("ML Agent");
+	}
 
 	@Override
 	public boolean[] getAction() {

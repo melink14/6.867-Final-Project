@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package project6867;
 
 import java.io.BufferedReader;
@@ -18,15 +21,11 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import weka.classifiers.functions.MultilayerPerceptron;
-import weka.clusterers.EM;
-
 import net.sf.javaml.classification.Classifier;
 import net.sf.javaml.classification.KNearestNeighbors;
 import net.sf.javaml.classification.bayes.NaiveBayesClassifier;
 import net.sf.javaml.classification.evaluation.CrossValidation;
 import net.sf.javaml.classification.evaluation.PerformanceMeasure;
-import net.sf.javaml.clustering.Clusterer;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.Instance;
@@ -36,17 +35,15 @@ import net.sf.javaml.featureselection.subset.GreedyBackwardElimination;
 import net.sf.javaml.featureselection.subset.GreedyForwardSelection;
 import net.sf.javaml.tools.DatasetTools;
 import net.sf.javaml.tools.data.FileHandler;
-import net.sf.javaml.tools.weka.WekaClassifier;
-import net.sf.javaml.tools.weka.WekaClusterer;
 
-public class FeatureSelection {
-
+public class ClassifierTrainer {
 	private static Random rand;
-	private static int DATA_SIZE = 500;
+	private static int DATA_SIZE = 10000;
 	private static int FEATURE_SIZE = 4697;
 	private static int featureCount = 0;
 	private static DateFormat dateFormat;
-
+	public static enum DataType{FULL, ONE, FIVE, TEN};
+	public static enum ClassifierType{KNN, NB};
 	/*
 	 * Loads a file into the data field.
 	 * 
@@ -145,27 +142,38 @@ public class FeatureSelection {
 		return data;
 	}
 	
+	public static Classifier getClassifier(ClassifierType classType, DataType dataType, Object[] args){
+		rand = new Random();
+		dateFormat = new SimpleDateFormat("HH:mm:ss");
+		Dataset data = new DefaultDataset();
+		switch(dataType){
+			case FULL:	data = getCompositeDataset(DATA_SIZE); break;
+			case ONE:	data = getMaskedCompositeDataset("forward@0.01_5000mixednew.data", DATA_SIZE); break;
+			case FIVE:	data = getMaskedCompositeDataset("forward@0.05_5000mixednew.data", DATA_SIZE); break;
+			case TEN:	data = getMaskedCompositeDataset("forward@0.1_5000mixednew.data", DATA_SIZE); break;
+			default:	data = getMaskedCompositeDataset("forward@0.01_5000mixednew.data", DATA_SIZE); break;
+		}
+		Classifier cl;
+		switch(classType){
+			case KNN:	cl = new KNearestNeighbors(3); break;
+			case NB:	cl = new NaiveBayesClassifier(false, true, true);
+			default:	cl = new NaiveBayesClassifier(false, true, true);
+		}
+		CrossValidation cv = new CrossValidation(cl);
+		cv.crossValidation(data,10);
+		return cl;
+	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		rand = new Random();
-		dateFormat = new SimpleDateFormat("HH:mm:ss");
-		//Dataset data = getMaskedCompositeDataset("forward@0.01_20000mixednew.data", DATA_SIZE);
-
-		//System.out.println(data.size() + " datapoints loaded...");
-
-		
-		
-		
 		Classifier cl1 = new NaiveBayesClassifier(false, true, true);
 		Classifier cl2 = new NaiveBayesClassifier(false, true, true);
 		Classifier cl3 = new NaiveBayesClassifier(false, true, true);
 		Runnable[] runners = new Runnable[3];
 		Thread[] threads = new Thread[3];
-		//runners[0] = new FeatureThread(data, FEATURE_SIZE, .05, FeatureThread.Direction.FORWARD);
-		//runners[1] = new FeatureThread(data, FEATURE_SIZE, .10, FeatureThread.Direction.FORWARD);
-		//runners[2] = new FeatureThread(data, FEATURE_SIZE, .01, FeatureThread.Direction.FORWARD);
 		runners[0] = new ClassifierThread(cl1, getMaskedCompositeDataset("forward@0.01_5000mixednew.data", DATA_SIZE), "NB"+(5*DATA_SIZE/1000)+"k_.01.out");
 		runners[1] = new ClassifierThread(cl2, getMaskedCompositeDataset("forward@0.05_5000mixednew.data", DATA_SIZE), "NB"+(5*DATA_SIZE/1000)+"k_.05.out");
 		runners[2] = new ClassifierThread(cl3, getMaskedCompositeDataset("forward@0.1_5000mixednew.data", DATA_SIZE), "NB"+(5*DATA_SIZE/1000)+"k_.1.out");
@@ -181,24 +189,6 @@ public class FeatureSelection {
 			e.printStackTrace();
 		}
 
-		try{
-			/*
-			EM em = new EM();
-			em.setMaxIterations(1000);
-			em.setNumClusters(16);
-			Clusterer jmlem = new WekaClusterer(em);
-			Dataset[] clusters = jmlem.cluster(data);
-			System.out.println("End at " + dateFormat.format(new Date()));
-			System.out.println(em.toString()+"\n");
-			for(int i = 0; i < clusters.length; i++){
-				System.out.println("Cluster "+ i + ":" + clusters[i].size() + " elements.");
-				System.out.println(clusters[i].classes());
-			}
-			*/
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
 		System.exit(0);
 	}
 	
@@ -305,5 +295,3 @@ public class FeatureSelection {
 	}
 
 }
-
-
