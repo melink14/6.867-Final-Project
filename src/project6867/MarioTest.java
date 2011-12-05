@@ -38,12 +38,9 @@ import net.sf.javaml.classification.Classifier;
 import project6867.ClassifierTrainer.ClassifierType;
 import project6867.ClassifierTrainer.DataType;
 import ch.idsia.agents.Agent;
-import ch.idsia.agents.LearningAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
-import ch.idsia.benchmark.tasks.MarioCustomSystemOfValues;
 import ch.idsia.tools.EvaluationInfo;
-import ch.idsia.tools.MarioAIOptions; import erekspeed.CuckooSubFBJTAAgent;
-import erekspeed.ErekSpeedCuckooAgent;
+import ch.idsia.tools.MarioAIOptions;
 /**
  * Created by IntelliJ IDEA.
  * User: julian
