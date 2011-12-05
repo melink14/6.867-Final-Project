@@ -7,11 +7,9 @@ import java.util.BitSet;
 import net.sf.javaml.classification.Classifier;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
-
 import ch.idsia.agents.Agent;
 import ch.idsia.benchmark.mario.environments.Environment;
 import erekspeed.ActionWrapper;
-import erekspeed.CuckooSubAgent;
 
 public class MLAgent implements Agent {
 
@@ -26,7 +24,11 @@ public class MLAgent implements Agent {
 			start = System.currentTimeMillis();
 			FileInputStream is = new FileInputStream(fn);
 			ObjectInputStream in = new ObjectInputStream(is);
-			clf = (Classifier) in.readObject();
+			Object obj = in.readObject();
+			
+			if(obj instanceof Classifier)
+				clf = (Classifier)obj;
+			
 			stop = System.currentTimeMillis();
 			elapsed = stop - start;
 

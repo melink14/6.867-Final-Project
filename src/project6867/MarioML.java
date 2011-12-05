@@ -16,8 +16,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import weka.classifiers.trees.REPTree;
-
 import libsvm.LibSVM;
 import net.sf.javaml.classification.Classifier;
 import net.sf.javaml.classification.evaluation.CrossValidation;
@@ -28,6 +26,7 @@ import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
 import net.sf.javaml.tools.weka.WekaClassifier;
+import weka.classifiers.trees.REPTree;
 
 public class MarioML {
 
@@ -133,21 +132,20 @@ public class MarioML {
 		RandomForest rf = new RandomForest(TREES, true, FEATURE_SIZE, new Random());
 		
 		REPTree bob = new weka.classifiers.trees.REPTree();
+		
 		//bob.setMaxDepth(4);
 		
 		
 		Classifier sally = new WekaClassifier(bob);
 		sally.buildClassifier(data);
+		
+		sally.classify(data.instance(0));
 	
 		
 		//rf.buildClassifier(data);
 //		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
 //		oos.writeObject(rf);
 //		oos.close();
-		
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
-		oos.writeObject(bob);
-		oos.close();
 		
 		
 		

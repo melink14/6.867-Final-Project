@@ -29,8 +29,7 @@ package project6867;
 
 import ch.idsia.agents.Agent;
 import ch.idsia.benchmark.tasks.BasicTask;
-import ch.idsia.benchmark.tasks.MarioCustomSystemOfValues;
-import ch.idsia.tools.MarioAIOptions; import erekspeed.CuckooSubFBJTAAgent;
+import ch.idsia.tools.MarioAIOptions;
 /**
  * Created by IntelliJ IDEA.
  * User: julian
@@ -62,7 +61,7 @@ public final class MarioTest
 		
 		options.setArgs("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -ld 1 -ls 4341253");
 		
-		evaluate(new MLAgent("3KNN2k_.01.classifier"));
+		evaluate(new MLAgent("reptree2000.out"));
 
 		
 
