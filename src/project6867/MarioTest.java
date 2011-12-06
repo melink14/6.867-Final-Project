@@ -82,8 +82,8 @@ public final class MarioTest
 		try{output = new BufferedWriter(new FileWriter("MCNB10k_.1results.txt"));}catch(IOException e){e.printStackTrace();}
 		Object[] a = {false, true, true};
 		MulticlassTrainer mt = new MulticlassTrainer(ClassifierType.NB, a);
-		mt.buildClassifier(new DataHandler().getDataset(1000, DataType.ONE));
-		Agent agent = new MLAgent(mt);
+		mt.buildClassifier(DataHandler.getDataset(1000, DataType.ONE));
+		Agent agent = new MLAgent(mt, DataHandler.getMaskFile(DataType.ONE));
 		//Agent agent = new MLAgent(ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.TEN, null));
 		//Agent agent = new MLAgent("1KNN5k_.05.classifier");
 		

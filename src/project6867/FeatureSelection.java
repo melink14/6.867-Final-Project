@@ -15,7 +15,7 @@ import net.sf.javaml.featureselection.subset.GreedyForwardSelection;
 
 public class FeatureSelection {
 
-	private static int DATA_SIZE = 1000;
+	private static int DATA_SIZE = 10;
 	private static int FEATURE_SIZE = 5000;
 
 	/**
@@ -25,9 +25,9 @@ public class FeatureSelection {
 		DataHandler dh = new DataHandler();
 		Runnable[] runners = new Runnable[3];
 		Thread[] threads = new Thread[3];
-		runners[0] = new FeatureThread(dh.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .15, FeatureThread.Direction.FORWARD);
-		runners[1] = new FeatureThread(dh.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .20, FeatureThread.Direction.FORWARD);
-		runners[2] = new FeatureThread(dh.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .25, FeatureThread.Direction.FORWARD);
+		runners[0] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .01, FeatureThread.Direction.FORWARD);
+		runners[1] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .05, FeatureThread.Direction.FORWARD);
+		runners[2] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .10, FeatureThread.Direction.FORWARD);
 		for(int i = 0; i < 3; i++){
 			threads[i] = new Thread(runners[i]);
 			threads[i].start();

@@ -1,14 +1,11 @@
 package project6867;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -21,7 +18,6 @@ import net.sf.javaml.core.DefaultDataset;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.core.SparseInstance;
 import net.sf.javaml.tools.DatasetTools;
-import net.sf.javaml.tools.data.FileHandler;
 
 public class DataHandler {
 	private static Random rand;
@@ -38,6 +34,7 @@ public class DataHandler {
 	
 	public DataHandler(){
 		rand = new Random();
+		masks = new HashMap<String, Map<Integer, Integer>>();
 		dateFormat = new SimpleDateFormat("HH:mm:ss");
 	}
 	
@@ -190,5 +187,15 @@ public class DataHandler {
 		}
 		return masks.get(maskFile);
 		
+	}
+
+	public static String getMaskFile(DataType type) {
+		switch(type){
+			case FULL:	return null;
+			case ONE:	return "forward@0.01_5000mixed.data";
+			case FIVE:	return "forward@0.05_5000mixed.data"; 
+			case TEN:	return "forward@0.1_5000mixed.data"; 
+			default:	return "forward@0.01_5000mixed.data";
+		}
 	}
 }
