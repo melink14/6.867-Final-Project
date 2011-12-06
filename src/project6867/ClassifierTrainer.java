@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import weka.classifiers.trees.REPTree;
+
 import net.sf.javaml.classification.Classifier;
 import net.sf.javaml.classification.KNearestNeighbors;
 import net.sf.javaml.classification.bayes.NaiveBayesClassifier;
@@ -35,6 +37,7 @@ import net.sf.javaml.featureselection.subset.GreedyBackwardElimination;
 import net.sf.javaml.featureselection.subset.GreedyForwardSelection;
 import net.sf.javaml.tools.DatasetTools;
 import net.sf.javaml.tools.data.FileHandler;
+import net.sf.javaml.tools.weka.WekaClassifier;
 
 public class ClassifierTrainer {
 	private static Random rand;
@@ -43,7 +46,7 @@ public class ClassifierTrainer {
 	private static int featureCount = 0;
 	private static DateFormat dateFormat;
 	public static enum DataType{FULL, ONE, FIVE, TEN};
-	public static enum ClassifierType{KNN, NB};
+	public static enum ClassifierType{KNN, NB, ID};
 	/*
 	 * Loads a file into the data field.
 	 * 
@@ -134,11 +137,11 @@ public class ClassifierTrainer {
 	private static Dataset getMaskedCompositeDataset(String maskFile, int numRecords){
 		Dataset data = new DefaultDataset();
 		DatasetTools.merge(data,
-				loadMaskedFile(maskFile, "basic.data", DATA_SIZE),
-				loadMaskedFile(maskFile, "basicenemies.data", DATA_SIZE),
-				loadMaskedFile(maskFile, "basicgaps.data", DATA_SIZE),
-				loadMaskedFile(maskFile, "enemiesblocks.data", DATA_SIZE),
-				loadMaskedFile(maskFile, "enemiesblocksgaps.data", DATA_SIZE));
+				loadMaskedFile(maskFile, "basic.data", DATA_SIZE));//,
+//				loadMaskedFile(maskFile, "basicenemies.data", DATA_SIZE),
+//				loadMaskedFile(maskFile, "basicgaps.data", DATA_SIZE),
+//				loadMaskedFile(maskFile, "enemiesblocks.data", DATA_SIZE),
+//				loadMaskedFile(maskFile, "enemiesblocksgaps.data", DATA_SIZE));
 		return data;
 	}
 	
@@ -148,19 +151,24 @@ public class ClassifierTrainer {
 		Dataset data = new DefaultDataset();
 		switch(dataType){
 			case FULL:	data = getCompositeDataset(DATA_SIZE); break;
-			case ONE:	data = getMaskedCompositeDataset("forward@0.01_5000mixednew.data", DATA_SIZE); break;
-			case FIVE:	data = getMaskedCompositeDataset("forward@0.05_5000mixednew.data", DATA_SIZE); break;
-			case TEN:	data = getMaskedCompositeDataset("forward@0.1_5000mixednew.data", DATA_SIZE); break;
-			default:	data = getMaskedCompositeDataset("forward@0.01_5000mixednew.data", DATA_SIZE); break;
+			case ONE:	data = getMaskedCompositeDataset("forward@0.01_5000mixed.data", DATA_SIZE); break;
+			case FIVE:	data = getMaskedCompositeDataset("forward@0.05_5000mixed.data", DATA_SIZE); break;
+			case TEN:	data = getMaskedCompositeDataset("forward@0.1_5000mixed.data", DATA_SIZE); break;
+			default:	data = getMaskedCompositeDataset("forward@0.01_5000mixed.data", DATA_SIZE); break;
 		}
 		Classifier cl;
 		switch(classType){
 			case KNN:	cl = new KNearestNeighbors(3); break;
-			case NB:	cl = new NaiveBayesClassifier(false, true, true);
+			case NB:	cl = new NaiveBayesClassifier(false, true, true); break;
+			case ID:    
+				REPTree rep = new REPTree();
+				rep.setNoPruning(false);
+				cl = new WekaClassifier(rep); break;
 			default:	cl = new NaiveBayesClassifier(false, true, true);
 		}
-		CrossValidation cv = new CrossValidation(cl);
-		cv.crossValidation(data,10);
+//		CrossValidation cv = new CrossValidation(cl);
+//		cv.crossValidation(data,10);
+		cl.buildClassifier(data);
 		return cl;
 	}
 	

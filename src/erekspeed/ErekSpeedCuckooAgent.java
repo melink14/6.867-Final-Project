@@ -53,7 +53,7 @@ public class ErekSpeedCuckooAgent implements LearningAgent {
 	 * The major Agent has a population of SubAgentS.  This lets me select
 	 * the sub agent on the fly.
 	 */
-	public static SubAgent AGENT = SubAgent.FBJTA;
+	public static SubAgent AGENT = SubAgent.FJTA;
 
 	/**
 	 * Default Constructor.
@@ -331,7 +331,7 @@ public class ErekSpeedCuckooAgent implements LearningAgent {
 	}
 
 	enum SubAgent {
-		RANDOM, FJA, FBJA, FBJTA
+		RANDOM, FJA, FBJA, FBJTA, FJTA
 	}
 
 	// Sorts worst to best

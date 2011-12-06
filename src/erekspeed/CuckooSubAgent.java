@@ -44,6 +44,8 @@ public abstract class CuckooSubAgent implements Agent, Serializable {
 				return new CuckooSubFBJAAgent(cap);
 			case FBJTA:
 				return new CuckooSubFBJTAAgent(cap);
+			case FJTA:
+				return new CuckooSubFJTAAgent(cap);
 		}
 		return new CuckooSubRandomAgent(cap);
 	}
