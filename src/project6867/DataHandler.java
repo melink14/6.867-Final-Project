@@ -39,11 +39,11 @@ public class DataHandler {
 		System.out.println("Started fetching data at " + dateFormat.format(new Date()));
 		Dataset data = new DefaultDataset();
 		DatasetTools.merge(data,
-				loadFile("cleanbasic.data", numRecords),
-				loadFile("cleanbasicenemies.data", numRecords),
-				loadFile("cleanbasicgaps.data", numRecords),
-				loadFile("cleanenemiesblocks.data", numRecords),
-				loadFile("cleanenemiesblocksgaps.data", numRecords));
+				loadFile("cleanbasic55.data", numRecords),
+				loadFile("cleanbasicenemies55.data", numRecords),
+				loadFile("cleanbasicgaps55.data", numRecords),
+				loadFile("cleanenemiesblocks55.data", numRecords),
+				loadFile("cleanenemiesblocksgaps55.data", numRecords));
 		System.out.println("Finished fetching data at " + dateFormat.format(new Date()));
 		return data;
 	}
