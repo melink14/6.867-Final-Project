@@ -22,7 +22,7 @@ public class DataTask extends LearningTask
 
 private Map<BitSet, Map<ActionWrapper, List<DataFitness> > > dataMap = new HashMap<BitSet, Map<ActionWrapper, List<DataFitness> > >();
 private final int maxEvals = 30000;
-private final int refineEvals = 1000;
+private final int refineEvals = 10000;
 private int startRefine = 0;
 private boolean hasWon = false;
 private int curEvals = 0;

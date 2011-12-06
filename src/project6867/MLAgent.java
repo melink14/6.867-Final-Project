@@ -103,9 +103,22 @@ public class MLAgent implements Agent {
 	@Override
 	public void integrateObservation(Environment environment) {
 		obs = environment.getMergedObservationZZBit(3, 3);
+		
 		if(environment.getMarioMode() != 0)
 			obs.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + environment.getMarioMode()-1);
-
+		if(environment.isMarioAbleToJump())
+			obs.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + 2);
+		if(!environment.isMarioOnGround())
+			obs.set(environment.getReceptiveFieldHeight()*environment.getReceptiveFieldWidth()*13 + 3);
+		
+//		obs = new BitSet();
+//		if(environment.isMarioAbleToJump())
+//			obs.set(0);
+//		
+//		if(!environment.isMarioOnGround())
+//			obs.set(1);
+		
+//		System.out.println(obs.toString());
 	}
 
 	@Override

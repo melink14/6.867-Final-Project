@@ -55,6 +55,7 @@ public final class MarioTest
 
 	private static MarioAIOptions options;
 	private static BufferedWriter output;
+
 	private static Map<String, String> ops;
 	
 	public static void evaluate(Agent agent) {
