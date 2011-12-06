@@ -132,7 +132,7 @@ public class DataHandler {
 		System.out.println("Loading " + filename + " and keeping features as specified by " + maskFile);
 		Dataset data = new DefaultDataset();
 		Map<Integer, Integer> mask = getMask(maskFile); //Map between old index and new shorter index
-		int featureCount = 0;
+		int featureCount = FEATURE_SIZE;
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(filename));
 			Pattern p = Pattern.compile("(.*)\\s\\{(.*)\\}");
