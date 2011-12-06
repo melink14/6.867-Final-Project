@@ -51,6 +51,10 @@ public class FeatureSelection {
 		
 		public FeatureThread(Dataset d, int featureSize, double retention, Direction dir){
 			this.data = d.copy();
+			if(retention < 1)
+				this.n = (int)this.featureSize*retention;
+			else
+				this.n = retention;
 			this.n = retention;
 			this.featureSize = featureSize;
 			this.direction = dir;

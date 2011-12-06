@@ -20,33 +20,15 @@ public class MLAgent implements Agent {
 	private String maskFile;
 	
 	public MLAgent(String fn, String maskFile) {
-		try {
-			long start, stop, elapsed;
-			start = System.currentTimeMillis();
-			FileInputStream is = new FileInputStream(fn);
-			ObjectInputStream in = new ObjectInputStream(is);
-			Object obj = in.readObject();
-			
-			if(obj instanceof Classifier)
-				clf = (Classifier)obj;
-			
-			stop = System.currentTimeMillis();
-			elapsed = stop - start;
-
-			System.out.println("Time taken to load:" + elapsed);
-		}
-		catch (Exception ex) {
-			System.err.println(ex);
-		}
+		this(fn);
 		this.maskFile = maskFile;
-		setName("ML Agent");
 	}
 	
 	public MLAgent(Classifier c, String maskFile) {
-		clf = c;
-		this.maskFile = maskFile;
-		setName("ML Agent");
+		this(c);
+		this.maskFile = maskFile;	
 	}
+	
 	public MLAgent(String fn) {
 		try {
 			long start, stop, elapsed;
@@ -77,7 +59,7 @@ public class MLAgent implements Agent {
 	@Override
 	public boolean[] getAction() {
 		String cls = clf.classify(getInstance()).toString();
-		System.out.print(cls + " ");
+		//System.out.print(cls + " ");
 		int cl = Integer.parseInt(cls);
 		
 		ActionWrapper a = ActionWrapper.parseActionWrapper(cl);
