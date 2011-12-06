@@ -49,8 +49,6 @@ public class ClassifierTrainer {
 				cl = new WekaClassifier(rep); break;
 			default:	cl = new NaiveBayesClassifier(false, true, true);
 		}
-//		CrossValidation cv = new CrossValidation(cl);
-//		cv.crossValidation(data,10);
 		cl.buildClassifier(data);
 		return cl;
 	}
