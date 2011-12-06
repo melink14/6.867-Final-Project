@@ -20,9 +20,9 @@ import net.sf.javaml.core.SparseInstance;
 import net.sf.javaml.tools.DatasetTools;
 
 public class DataHandler {
-	private static Random rand;
-	private static int FEATURE_SIZE = 5000;
-	private static DateFormat dateFormat;
+	private static Random rand = new Random();
+	private static int FEATURE_SIZE = 4697;
+	private static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	private static DataType type;
 	private static Map<String, Map<Integer, Integer>> masks = new HashMap<String, Map<Integer, Integer>>();
 	public static enum DataType{FULL, ONE, FIVE, TEN};
@@ -33,8 +33,6 @@ public class DataHandler {
 	 */
 	
 	public DataHandler(){
-		rand = new Random();
-		dateFormat = new SimpleDateFormat("HH:mm:ss");
 	}
 	
 	public static Dataset getCompositeDataset(int numRecords){
