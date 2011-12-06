@@ -13,6 +13,11 @@ import net.sf.javaml.distance.DistanceMeasure;
  */
 public class JaccardIndex extends AbstractSimilarity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1139128984834796568L;
+
 	@Override
 	public double measure(Instance x, Instance y) {
 		int m11 = 0;   // both have 1
