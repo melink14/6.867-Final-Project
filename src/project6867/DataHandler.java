@@ -24,7 +24,7 @@ public class DataHandler {
 	private static int FEATURE_SIZE = 5000;
 	private static DateFormat dateFormat;
 	private static DataType type;
-	private static Map<String, Map<Integer, Integer>> masks;
+	private static Map<String, Map<Integer, Integer>> masks = new HashMap<String, Map<Integer, Integer>>();
 	public static enum DataType{FULL, ONE, FIVE, TEN};
 	/*
 	 * Loads a file into the data field.
@@ -34,7 +34,6 @@ public class DataHandler {
 	
 	public DataHandler(){
 		rand = new Random();
-		masks = new HashMap<String, Map<Integer, Integer>>();
 		dateFormat = new SimpleDateFormat("HH:mm:ss");
 	}
 	

@@ -78,14 +78,15 @@ public final class MarioTest
 
 
 	public static void main(String[] args)
-	{
-		try{output = new BufferedWriter(new FileWriter("MCNB10k_.1results.txt"));}catch(IOException e){e.printStackTrace();}
+	{	
+		String prefix = "";
+		try{output = new BufferedWriter(new FileWriter(prefix + "results.txt"));}catch(IOException e){e.printStackTrace();}
 		Object[] a = {false, true, true};
-		MulticlassTrainer mt = new MulticlassTrainer(ClassifierType.NB, a);
-		mt.buildClassifier(DataHandler.getDataset(1000, DataType.ONE));
-		Agent agent = new MLAgent(mt, DataHandler.getMaskFile(DataType.ONE));
+//		MulticlassTrainer mt = new MulticlassTrainer(ClassifierType.NB, a);
+//		mt.buildClassifier(DataHandler.getDataset(1000, DataType.ONE));
+//		Agent agent = new MLAgent(mt, DataHandler.getMaskFile(DataType.ONE));
 		//Agent agent = new MLAgent(ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.TEN, null));
-		//Agent agent = new MLAgent("1KNN5k_.05.classifier");
+		Agent agent = new MLAgent("2dimscleansvmjust2216linearg0.5c0.01ds10000.out", "forward@0.001_500mixed.data");
 		
 		ops = new HashMap<String,String>();
 		ops.put("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886", "0,0,0");

@@ -32,11 +32,11 @@ import weka.classifiers.trees.REPTree;
 public class MarioML {
 
 	private static final int FEATURE_SIZE = 4697;
-	private static final int PER_FEATURE = 400;
-	private static final int TREES = 1;
+	private static final int PER_FEATURE = 10000;
+	private static final int TREES = 100;
 	private static final float MAX_FRAC = 1f;
 	private static Dataset data;
-	private static HashSet<Integer> features = new HashSet<Integer>(500);
+	private static HashMap<Integer, Integer> features = new HashMap<Integer, Integer>(500);
 	private static String output;
 
 
@@ -51,24 +51,24 @@ public class MarioML {
 		Collection<String> filenames = new ArrayList<String>(5);
 		
 		// add the data I want to load
-		filenames.add("basic.data");
-		filenames.add("basicenemies.data");
-		filenames.add("basicgaps.data");
-		filenames.add("enemiesblocksgaps.data");
-		filenames.add("enemiesblocks.data");
+		filenames.add("cleanbasic.data");
+//		filenames.add("basicenemies.data");
+//		filenames.add("basicgaps.data");
+//		filenames.add("enemiesblocksgaps.data");
+//		filenames.add("enemiesblocks.data");
 		
 		int datasize = PER_FEATURE*filenames.size();
 	
 		float gamma = .5f;
-		float C = .001f;
+		float C = .01f;
 		String kernel = "linear";
 		
-		//output = "reduced.01" + kernel + "g" + gamma + "c" + C + "ds" + datasize +".out";
-		output = "reduced.01randomforest" + "trees" + TREES + "data" + datasize + ".out";
-		MarioML.loadFeatureSpace("forward@0.01_5000mixednew.data");
+		output = "2dimscleansvmjust2216" + kernel + "g" + gamma + "c" + C + "ds" + datasize +".out";
+		//output = "attreduced.01randomforest" + "trees" + TREES + "data" + datasize + ".out";
+		MarioML.loadFeatureSpace("forward@0.001_500mixed.data");
 		
-		Classifier clf = marioml.runRF(filenames);
-		//Classifier clf = marioml.runSVM(filenames, datasize, C, gamma, kernel);
+		//Classifier clf = marioml.runRF(filenames);
+		Classifier clf = marioml.runSVM(filenames, datasize, C, gamma, kernel);
 //		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
 //		
 //		oos.writeObject(clf);
@@ -94,26 +94,35 @@ public class MarioML {
 		svm.getParameters().kernel_type = libsvm.svm_parameter.LINEAR;
 		svm.getParameters().gamma = gamma;
 		svm.getParameters().cache_size = 2000;
+//		svm.getParameters().weight = new double[]{1000100000};
+//		svm.getParameters().weight_label = new int[]{16};
+		svm.getParameters().svm_type = libsvm.svm_parameter.C_SVC;
 		
 		svm.buildClassifier(data);
+		System.out.println(data.toString());
+		for(double val : svm.getWeights()){
+			System.out.println(val);
+		}
+		
+		//System.out.print(Arrays.toString(svm.getParameters().));
+		
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
 		oos.writeObject(svm);
 		oos.close();
 		
 		System.out.println(System.currentTimeMillis() - start);
 		
-		start = System.currentTimeMillis();
-		Map<Object, PerformanceMeasure> p = new CrossValidation(svm).crossValidation(data, 5);
-		System.out.println(System.currentTimeMillis() - start);
-		
-		for(Object o:p.keySet()) {
-			System.out.println(o+": "+p.get(o).getAccuracy());
-			System.out.println(o+": "+p.get(o).getPrecision());
-			System.out.println(o+": "+p.get(o).getRecall());
-			System.out.println(o+": "+p.get(o).getFMeasure());
-		
-		}
-		
+//		start = System.currentTimeMillis();
+//		Map<Object, PerformanceMeasure> p = new CrossValidation(svm).crossValidation(data, 2);
+//		System.out.println(System.currentTimeMillis() - start);
+//		
+//		for(Object o:p.keySet()) {
+//			System.out.println(o+": "+p.get(o).getAccuracy());
+//			System.out.println(o+": "+p.get(o).getPrecision());
+//			System.out.println(o+": "+p.get(o).getRecall());
+//			System.out.println(o+": "+p.get(o).getFMeasure());
+//		
+//		}
 		return svm;
 		
 	}
@@ -130,29 +139,30 @@ public class MarioML {
 //		System.out.println("Done Sampling");
 		
 		long start = System.currentTimeMillis();
-		RandomForest rf = new RandomForest(TREES, true, FEATURE_SIZE, new Random());
+		RandomForest rf = new RandomForest(TREES, true, (int)(Math.log10(features.size())+1), new Random());
 		
-		REPTree bob = new weka.classifiers.trees.REPTree();
+		
+		//REPTree bob = new weka.classifiers.trees.REPTree();
 		
 		//bob.setMaxDepth(4);
 		
 		
-		Classifier sally = new WekaClassifier(bob);
-		sally.buildClassifier(data);
-		
-		sally.classify(data.instance(0));
+//		Classifier sally = new WekaClassifier(bob);
+//		sally.buildClassifier(data);
+//		
+//		sally.classify(data.instance(0));
 	
 		
-		//rf.buildClassifier(data);
-//		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
-//		oos.writeObject(rf);
-//		oos.close();
+		rf.buildClassifier(data);
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(output));
+		oos.writeObject(rf);
+		oos.close();
 		
 		
 		
 		System.out.println(System.currentTimeMillis() - start);
 		
-		//System.out.println(rf.getOutOfBagErrorEstimate());
+		System.out.println(rf.getOutOfBagErrorEstimate());
 		
 		return rf;
 		
@@ -174,20 +184,21 @@ public class MarioML {
 			Instance feature_vector;
 			Map<Integer, Integer> histo = new HashMap<Integer, Integer>(50);
 			int count = 0;
+			r.skip(10000000);
 			while ((s = r.readLine()) != null) {
 				m = p.matcher(s);
 				if (m.matches()) {
 					if(!addToHisto(Integer.parseInt(m.group(1)), histo))
 						continue;
-					feature_vector = new SparseInstance(FEATURE_SIZE);
+					feature_vector = new SparseInstance(features.size());
 					feature_vector.setClassValue(m.group(1));
 					for(String index : m.group(2).split(", ")){
 						if(index.equals(""))
 							break;
 						Integer tInd = Integer.parseInt(index);
-						if(!features.contains(tInd))
+						if(!features.containsKey(tInd))
 							continue;
-						feature_vector.put(Integer.parseInt(index), 1.0);
+						feature_vector.put(features.get(tInd), 1.0);
 					}
 					//System.out.println(feature_vector.size());
 					data.add(feature_vector);
@@ -207,6 +218,8 @@ public class MarioML {
 	}
 	
 	private static boolean addToHisto(int val, Map<Integer, Integer> histo) {
+		if(val != 22 && val != 16)
+			return false;
 		if(!histo.containsKey(val)) {
 			histo.put(val, 1);
 			return true;
@@ -232,8 +245,10 @@ public class MarioML {
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(filename));
 			String indices = r.readLine();
+			Integer i = 0;
 			for(String index : indices.split(", ")) {
-				features.add(Integer.parseInt(index));
+				features.put(Integer.parseInt(index), i);
+				i++;
 			}
 			
 		} catch (Exception e) {
