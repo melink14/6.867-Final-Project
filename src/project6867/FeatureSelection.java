@@ -15,8 +15,8 @@ import net.sf.javaml.featureselection.subset.GreedyForwardSelection;
 
 public class FeatureSelection {
 
-	private static int DATA_SIZE = 10;
-	private static int FEATURE_SIZE = 5000;
+	private static int DATA_SIZE = 5000;
+	private static int FEATURE_SIZE = 4697;
 
 	/**
 	 * @param args
@@ -25,9 +25,9 @@ public class FeatureSelection {
 		DataHandler dh = new DataHandler();
 		Runnable[] runners = new Runnable[3];
 		Thread[] threads = new Thread[3];
-		runners[0] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .01, FeatureThread.Direction.FORWARD);
-		runners[1] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .05, FeatureThread.Direction.FORWARD);
-		runners[2] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .10, FeatureThread.Direction.FORWARD);
+		runners[0] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, 2, FeatureThread.Direction.FORWARD);
+		runners[1] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, 10, FeatureThread.Direction.FORWARD);
+		runners[2] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, 100, FeatureThread.Direction.FORWARD);
 		for(int i = 0; i < 3; i++){
 			threads[i] = new Thread(runners[i]);
 			threads[i].start();
@@ -43,7 +43,7 @@ public class FeatureSelection {
 	private static class FeatureThread implements Runnable {
 
 		private Dataset data;
-		private double n;
+		private int n;
 		private int featureSize;
 		private Direction direction;
 		private DateFormat dateFormat;
@@ -52,10 +52,9 @@ public class FeatureSelection {
 		public FeatureThread(Dataset d, int featureSize, double retention, Direction dir){
 			this.data = d.copy();
 			if(retention < 1)
-				this.n = (int)this.featureSize*retention;
+				this.n = (int)(this.featureSize*retention);
 			else
-				this.n = retention;
-			this.n = retention;
+				this.n = (int)retention;
 			this.featureSize = featureSize;
 			this.direction = dir;
 			dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -66,11 +65,11 @@ public class FeatureSelection {
 			System.out.println(this.toString() + ":Started at " + dateFormat.format(new Date()));
 			Set<Integer> selected;
 			if(this.direction == Direction.FORWARD){
-				GreedyForwardSelection selector = new GreedyForwardSelection((int)(this.featureSize*this.n), new PearsonCorrelationCoefficient());
+				GreedyForwardSelection selector = new GreedyForwardSelection(this.n, new PearsonCorrelationCoefficient());
 				selector.build(data);
 				selected = selector.selectedAttributes();
 			}else{
-				GreedyBackwardElimination selector = new GreedyBackwardElimination((int)(this.featureSize*this.n), new PearsonCorrelationCoefficient());
+				GreedyBackwardElimination selector = new GreedyBackwardElimination(this.n, new PearsonCorrelationCoefficient());
 				selector.build(data);
 				selected = selector.selectedAttributes();
 			}
