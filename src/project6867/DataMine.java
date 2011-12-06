@@ -175,33 +175,32 @@ public static void main(String[] args)
     LearningAgent learningAgent = new ErekSpeedCuckooAgent(marioAIOptions);
 
 //  no enemies or gaps or blocks
-    
-    marioAIOptions.setArgs("-vis off -ll 50 -le off -lb off -lco off -lca off -ltb off -lg off");
-    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "basic");
+    marioAIOptions.setArgs("-vis off -rfw 5 -rfh 5 -ll 100 -le off -lb off -lco off -lca off -ltb off -lg off");
+    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "cleanbasic55");
 
 //    just enemies
     marioAIOptions = new MarioAIOptions(args);
     marioAIOptions.setAgent(learningAgent);
-    marioAIOptions.setArgs("-vis off -ll 50 -lb off -lco off -lca off -ltb off -lg off");
-    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "basicenemies");
+    marioAIOptions.setArgs("-vis off -rfw 5 -rfh 5 -ll 100 -lb off -lco off -lca off -ltb off -lg off");
+    DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 4, 3, "cleanbasicenemies55");
 
 //  just gaps
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
-  marioAIOptions.setArgs("-vis off -ll 50 -lb off -le off -lco off -lca off -ltb off -lg on");
-  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 4, 10, 2, "basicgaps");
+  marioAIOptions.setArgs("-vis off -rfw 5 -rfh 5 -ll 100 -lb off -le off -lco off -lca off -ltb off -lg on");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 4, 10, 2, "cleanbasicgaps55");
   
   //enemies blocks
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
-  marioAIOptions.setArgs("-vis off -ll 50 -lb on -lco off -lca off -ltb off -lg off");
-  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "enemiesblocks");
+  marioAIOptions.setArgs("-vis off -rfw 5 -rfh 5 -ll 100 -lb on -lco off -lca off -ltb off -lg off");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "cleanenemiesblocks55");
  
   //enemies blocks gaps
   marioAIOptions = new MarioAIOptions(args);
   marioAIOptions.setAgent(learningAgent);
-  marioAIOptions.setArgs("-vis off -ll 50 -lb on -lco off -lca off -ltb off -lg on");
-  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "enemiesblocksgaps");
+  marioAIOptions.setArgs("-vis off -rfw 5 -rfh 5 -ll 100 -lb on -lco off -lca off -ltb off -lg on");
+  DataMine.evaluateSubmission(marioAIOptions, learningAgent, 0, 6, 2, "cleanenemiesblocksgaps55");
 
     System.exit(0);
 }
