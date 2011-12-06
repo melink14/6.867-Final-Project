@@ -17,7 +17,36 @@ public class MLAgent implements Agent {
 	String filename;
 	BitSet obs;
 	private String name;
+	private String maskFile;
 	
+	public MLAgent(String fn, String maskFile) {
+		try {
+			long start, stop, elapsed;
+			start = System.currentTimeMillis();
+			FileInputStream is = new FileInputStream(fn);
+			ObjectInputStream in = new ObjectInputStream(is);
+			Object obj = in.readObject();
+			
+			if(obj instanceof Classifier)
+				clf = (Classifier)obj;
+			
+			stop = System.currentTimeMillis();
+			elapsed = stop - start;
+
+			System.out.println("Time taken to load:" + elapsed);
+		}
+		catch (Exception ex) {
+			System.err.println(ex);
+		}
+		this.maskFile = maskFile;
+		setName("ML Agent");
+	}
+	
+	public MLAgent(Classifier c, String maskFile) {
+		clf = c;
+		this.maskFile = maskFile;
+		setName("ML Agent");
+	}
 	public MLAgent(String fn) {
 		try {
 			long start, stop, elapsed;
@@ -44,7 +73,7 @@ public class MLAgent implements Agent {
 		clf = c;
 		setName("ML Agent");
 	}
-
+	
 	@Override
 	public boolean[] getAction() {
 		String cls = clf.classify(getInstance()).toString();
@@ -65,6 +94,9 @@ public class MLAgent implements Agent {
 			index += 1;
 		}
 		
+		if(maskFile != null )
+			ret = DataHandler.removeFeatures(ret, maskFile);
+
 		return ret;
 	}
 

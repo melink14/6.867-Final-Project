@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 
 import net.sf.javaml.classification.Classifier;
 import project6867.ClassifierTrainer.ClassifierType;
-import project6867.ClassifierTrainer.DataType;
+import project6867.DataHandler.DataType;
 import ch.idsia.agents.Agent;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.tools.EvaluationInfo;
@@ -60,12 +60,14 @@ public final class MarioTest
 	public static void evaluate(Agent agent) {
 		options.setAgent(agent);
 		final BasicTask basicTask = new BasicTask(options);
-
+		//options.setVisualization(true);
 		basicTask.doEpisodes(1, false, 1);
 		EvaluationInfo info = basicTask.getEnvironment().getEvaluationInfo();
 		try {
 			output.write("{" + ops.get(options.asString().trim()) + "," + options.getLevelDifficulty() + "} "
 					+ info.computeWeightedFitness() + ", "
+					+ info.computeBasicFitness() + ", "
+					+ info.distancePassedCells + ", "
 					+ info.marioStatus + "\n");
 			output.flush();
 		} catch (IOException e) {
@@ -76,9 +78,14 @@ public final class MarioTest
 
 	public static void main(String[] args)
 	{
-		try{output = new BufferedWriter(new FileWriter("NB1k@.1results.txt"));}catch(IOException e){e.printStackTrace();} 
-		Classifier c = ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.ONE, null);
-		Agent agent = new MLAgent(c);
+		try{output = new BufferedWriter(new FileWriter("MCNB10k_.1results.txt"));}catch(IOException e){e.printStackTrace();}
+		Object[] a = {false, true, true};
+		MulticlassTrainer mt = new MulticlassTrainer(ClassifierType.NB, a);
+		mt.buildClassifier(new DataHandler().getDataset(1000, DataType.ONE));
+		Agent agent = new MLAgent(mt);
+		//Agent agent = new MLAgent(ClassifierTrainer.getClassifier(ClassifierType.NB, DataType.TEN, null));
+		//Agent agent = new MLAgent("1KNN5k_.05.classifier");
+		
 		ops = new HashMap<String,String>();
 		ops.put("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -le off -ls 98886", "0,0,0");
 		ops.put("-vis off -ll 256 -lb off -lco off -lca off -ltb off -lg off -ls 31646", "1,0,0");
