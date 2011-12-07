@@ -18,27 +18,33 @@
 \section{Introduction}     % section 1
 This project is a departure from the common data sets of the machine learning world. The authors have eschewed corpi and proteins in lew of something a bit closer to their hearts.  To this end, we've repurposed the classification powers of the machine learning world for use with a classic platforming game from our youth, Super Mario Brothers(Mario).  Despite the levity of the topic, the discussion of the algorithms is just as reasonable as the common problems of the field.  Indeed, if we consider the Mario world a rough approximation of our own then it's easy to see the relevance of of studying a simpler version of what some might consider the holy grail of artificial intelligence: human level interaction with arbitrary environments.
 \newline\newline
-To that end, the work here explores treating world interaction as a classification problem.  Specfically, we want to classify every possible state of the world as a particular action. Taking such an action would lead to a new state and a new action.  By continuing in this fashion a agent explores the world in the manner it was trained.
+To that end, the work here explores treating world interaction as a classification problem.  Specfically, we want to classify every possible state of the world as a particular action. Taking such an action would lead to a new state and a new action.  By continuing in this fashion an agent explores the world in the manner it was trained.
 \newline\newline
-With such a vision, the present work describes and evaluates the application of popular machine learning algorithms to our lofty task.  We start with a discussion of the of previous work in the mario AI area.  In general, no standing body of data exists for Mario domain.  To overcome this obstacle we developed a system for a generating a dataset cooresponding to optimal actiosn in response to the current environment.  A description of this process and various attempted optimizations appears in \ref{sec:datagen}.  With data in hand, the authors attempt to create a Mario agent by applying popular machine learning algorithms to said data.  Each classifier is described in turn in section \ref{sec:class}.  \ref{sec:results} evaluates the previously described classifiers using common performance metrics as well as actual performance on unknown Mario levels.  We end with a discussion of future work and a conclusion.
+With such a vision, the present work describes and evaluates the application of popular machine learning algorithms to our lofty task.  We start with a discussion of the of previous work in the mario AI area.  In general, no standing body of data exists for the Mario domain.  To overcome this obstacle we developed a system for generating a dataset corresponding to optimal actions in response to the current environment.  A description of this process and various attempted optimizations appears in Section \ref{sec:datagen}.  With data in hand, the authors attempt to create a Mario agent by applying popular machine learning algorithms to said data.  Each classifier is described in turn in Section \ref{sec:class}.  Section \ref{sec:results} evaluates the previously described classifiers using common performance metrics as well as actual performance on unknown Mario levels.  We end with a discussion of future work and a conclusion.
 
 \subsection{Division of Work}
 
+\subsubsection{Erek}
+Leveraging some prior experience with the Mario Benchmark software, Erek created a means of mining data from the Mario being played by an expert agent. He also handled changes to the data miner that produced other datasets such as the 5x5 grid. To aid with feature selection, he implemented two DistanceMetrics (JaccardIndex and SymmetricalUncertainty). Erek was additionally responsible for the svm and random forest classifiers. Finally, he implemented the changes allowing classifier agents to be tested on the benchmark system.
+
+\subsubsection{Nick}
+Working with the raw 4697 dimension data obtained by Erek's datamining software, Nick handled running feature selection. Additionally, he worked on a generic one-versus-one classifier implementation and was responsible for the $k$nn, na\"{i}ve Bayes and REP tree classifiers. Finally, he compiled the classifier performance data that was gathered over the course of the project.
+
 \section{Previous Work}
 \label{sec:prevwork}
-The present work is the first to attemp to solve Mario as a classification problem.  That said, in recent years there has been a surge of attempts to develop Mario playing Agents.  The interest started with a MarioAI contest in 2009 which solicited all computer agent solutions to the Mario problem.  Interestingly, the report from said contest was dominated by handcoded such as A* \cite{marioaicompetiton}.  In fact, due to the ability to reverse engineer the simulation engine the problem was reduced to a planning problem and easily solved.  A scattering of learning algorithms involving neural networks and genetic algorithms were submited but performed poorly.  Later, learning algorithms were given their own category in which they only had to learn a single level. With such a constraint, learning algorithms were able to reach near optimal performance \cite{speed}. In contrast, we reject the notion that Mario is only solvable with complete prior knowledge of the the world.  We also acknowledge the vastness of the problem space and the failures of past learning problems getting lost in its many plateaus.  By creating an agent which trains on data generated from an expert player we greatly shink the problem space while maintaining some amount of generality.  
+The present work is the first to attemp to solve Mario as a classification problem.  That said, in recent years there has been a surge of attempts to develop Mario playing Agents.  The interest started with a MarioAI contest in 2009 which solicited all computer agent solutions to the Mario problem.  Interestingly, the report from said contest was dominated by handcoded planning, such as A* \cite{marioaicompetiton}.  In fact, due to the ability to reverse engineer the simulation engine the problem was reduced to a planning problem and easily solved.  A scattering of learning algorithms involving neural networks and genetic algorithms were submited but performed poorly.  Later, learning algorithms were given their own category in which they only had to learn a single level. With such a constraint, learning algorithms were able to reach near optimal performance \cite{speed}. In contrast, we reject the notion that Mario is only solvable with complete prior knowledge of the the world.  We also acknowledge the vastness of the problem space and the failures of past learning problems getting lost in its many plateaus.  By creating an agent which trains on data generated from an expert player we greatly shink the problem space while maintaining some amount of generality.  
 
 
 
 \section{Data Generation}     % section 2.1
 \label{sec:datagen}
-It is a nice metephor to imagine a untrained novice classifier viewing instance after instance of data derived from studying an expert agent.  In order to make such a thought reality, one not only needs a source of expert data to mine but also needs to massage it into a convenient format for current machine learning problem.  The following subsections will describe the initial state of the data, the conversion to a more general form, and finally performance optimizations.
+It is a nice metephor to imagine a untrained novice classifier viewing instance after instance of data derived from studying an expert agent.  In order to make such a thought reality, one not only needs a source of expert data to mine but also needs to massage it into a convenient format for current machine learning problems.  The following subsections will describe the initial state of the data, the conversion to a more general form, and finally performance optimizations.
 \subsection{MarioAI Benchmark}
 The MarioAI Benchmark \cite{mariobenchmark} was developed in order to facilitate the developing and testing of AI agents.  It placed the original software in a wrapper which the creators felt would allow easier creation of all kinds of agents.  For instance, while the various locations of objects in the world are represented as continuous variables, but the benchmark wraps the low level data in a representation which discretizes the data into a convenient grid like format.  Each cell of the grid contains a integer relating to its contents.  Furthermore, the agent has access to public information outside the grid, including whether it is alive or dead, on the ground, and it's status(size, powers).  Given this information, the agent is expected to return an action which coressponds to the buttons that might be pressed in the original game.  In order to gather data, we use a script which records the state and action pairs generated as a trained agent plays expertly.  By modifying the parameters of generated environments, millions of unique data points can be generated in minutes.
 \subsection{Data Conversion}
 Obviously, the representation has an obvious analog to common formats used in machine learning.  If we consider each grid space as feature then we can use it directly as a feature vector into a learning algorithm.  Furthermore, we can simply append the extra public information to the end to complete the vector.  Unfortunately, while this would be a valid input to most algorithms, the data is certainly not optimal.
 \newline\newline
-The first problem is that the values chosen to represnt the contents of each feature are seemingly random.  The scattering of the values are such that it the features appear continous upon first glance.  Unfortunately, upon further inspection it becomes obvious that the specific values a feature may take have no deeper meaning and would lead to poor results in many algorithms requiring placing the vectors in some measured space.  To solve this problem, we identified the possible values and grouped them into 13 cateogories.  For consistent weighting of every discrete value, we also expanded each feature into 13 binary levels.  At this point, the data is ready to be exported for classifier consumption.  Following the example of current software packages, we represented the vectors using a sparse indictor variable.  Using the default settings of the benchmark (19x19 grid) and including a few of the most important state flags we end up with a feature vector in 4697 dimensions.
+The first problem is that the values chosen to represnt the contents of each feature are seemingly random.  The scattering of the values are such that the features appear continous upon first glance.  Unfortunately, upon further inspection it becomes obvious that the specific values a feature may take have no deeper meaning and would lead to poor results in many algorithms requiring placing the vectors in some measured space.  To solve this problem, we identified the possible values and grouped them into 13 cateogories.  For consistent weighting of every discrete value, we also expanded each feature into 13 binary levels.  At this point, the data is ready to be exported for classifier consumption.  Following the example of current software packages, we represented the vectors using a sparse indictor variable.  Using the default settings of the benchmark (19x19 grid) and including a few of the most important state flags we end up with a feature vector in 4697 dimensions.
 
 \subsection{Optimizations}
 Given the data described so far, it's possible to apply common algorithms and get valid results.  Unfortunately, for many software packages such a large data set in this many dimensions is simply intractable.  For example, $k$nn scales teribly with large numbers of dimensions.  In order to take advantage of such classifiers we applied various feature reduction strategies.
@@ -50,6 +56,7 @@ The second feature selection optimization is simply one of reasoning.  We realiz
 The final optimization left the feature vector size alone but instead dealt with the problem of noise.  The most advanced Mario agents will sometimes make erratic actions in the interest of exploring the worlds and finding hidden secrets.  The subset of possible environments used for the present work, however, requried very little exploration.  Upon such realiziation, the parameters of observed expert were changed such that almost all erratic behavior was removed.  This allowed nosie sensitive algorithms like SVM to work better.
 
 \section{Classifiers}
+\label{sec:class}
 \subsection{Software}
 \subsubsection{Libraries}
 We considered several libraries for this project and ultimately settled on Java ML \cite{javaml}. Our main 
@@ -76,19 +83,19 @@ for libsvm that would allow us to reap its benefits from within a single library
 \newline\newline
 We ultimately chose Java ML due to its simple data interface, native java compatibility, and the fact that it 
 wrapped both Weka and libsvm functionality. This enabled us to use libsvm for our support vector classifiers, 
-wrapped Weka classifiers for random forests, na\"{i}ve Bayes, KNN and REP trees, and forward and backwards feature 
+wrapped Weka classifiers for random forests, na\"{i}ve Bayes, $k$nn and REP trees, and forward and backwards feature 
 selection. 
 
-\subsection{KNN}
+\subsection{$k$nn}
 \subsubsection{Reasons for selection and expectations}
 We chose to include k nearest neighbors as one of our algorithms because we thought that the large search space 
 would help it identify similarities between attributes in our dataset. Hopes were high for the reduced feature 
 sets as they should only be looking at the attributes that have an impact on the action to be taken for a given 
-board configuration.  We expected KNN to train slowly and respond slowly, making it less than ideal for actual play. 
+board configuration.  We expected $k$nn to train slowly and respond slowly, making it less than ideal for actual play. 
 However, the simplicity of the algorithm would give us a good baseline for what is possible.
 
 \subsubsection{Parameter selection}
-KNN had very few parameters to select – the number, $k$, of neighbors to look at and the distance measure that would 
+$k$nn had very few parameters to select – the number, $k$, of neighbors to look at and the distance measure that would 
 be used to find the nearest neighbors. First, due to the scarcity of data for some of our classes, we chose to 
 experiment with $k$ from one to five. We then selected a few distance measures to test – Euclidian, symmetric uncertainty 
 and Jaccard indexing. We then ran a grid search using five-fold cross validation to determine the best set. The metrics 
@@ -123,7 +130,7 @@ REP (Reduced Error Pruning) trees, while not specifically covered in class, were
 various tree classsification methods. This algorithm builds a decision/regression tree and internally splits the 
 dataset into folds in order to perform reduced error pruning. The key motivation for including REP trees in our 
 ensemble of classifiers was to have a tree that actively prunes itself as they are purported to be especially good 
-at classifying categorical data. We expected the tree to take longer to train than KNN or na\"{i}ve Bayes, but to 
+at classifying categorical data. We expected the tree to take longer to train than $k$nn or na\"{i}ve Bayes, but to 
 respond to requests quickly.
 
 \subsubsection{Parameter selection}
@@ -140,9 +147,10 @@ Random Forest was our choice for an ensemble classifier.  It's incredibly simple
 The standard parameters for this function are number of trees and number of features to sample.  There is no guiding principle for comprehensive parameter search for these parameteres however so simple heuristics were used.  The number of trees was chosen to be the square root of the data, and the number of dimensions was chosen to be $log_2$ of the dimensionality.
 
 \section{Results}
+\label{sec:results}
 \subsection{Metrics}
 In evaluating our methods we decided to use a combination of accuracy, precision, recall and f1 characteristics to 
-evaluate our cross validation results for KNN, SVM and na\"{i}ve Bayes. As the tree algorithms do not measure these
+evaluate our cross validation results for $k$nn, SVM and na\"{i}ve Bayes. As the tree algorithms do not measure these
 statistics, we used root mean squared error as our metric.
 \newline\newline
 Similarly, a metric was needed to compare results from runs through the Mario 
@@ -150,9 +158,9 @@ Benchmark. The metrics picked for that were a combination of a weighted fitness 
 calculated and a scalar progress count that represented how far through the level the classifier controlled Mario was 
 able to get. The following analyses are based on these metrics.
 
-\subsection{KNN}
+\subsection{$k$nn}
 \subsubsection{Cross Validation}
-Running five-fold cross validation on KNN revealed interesting results. Cross validation revealed that 3 was the optimal
+Running five-fold cross validation on $k$nn revealed interesting results. Cross validation revealed that 3 was the optimal
 choice for $k$. The first thing we noticed was with respect to the distance measures -- Euclidean distance was worse than
 the Jaccard index for out data. In cross validation, the best results achieved with Euclidean distance were precision of 0.645,
 accuracy of .851, recall of .0327 and F1 measure of .0472. Due to many classes not being chosen, precision could not be averaged
@@ -160,7 +168,7 @@ across the datasets for a few configurations. The results are below.
 
 \begin{table}[h!]
 	\begin{center}
-		\caption{Cross validation results for KNN}
+		\caption{Cross validation results for $k$nn}
 		\begin{tabular}{l | l || l | l | l | l }
 		Data Size & Feature Reduction & Precision & Accuracy & Recall & F1 Measure \\
 		\hline
@@ -175,9 +183,9 @@ across the datasets for a few configurations. The results are below.
 \end{table}
 
 \subsubsection{Mario Benchmark}
-As expected, the KNN algorithm was incredibly slow to respond to move requests. Additionally, as eluded to by the invalid precision
+As expected, the $k$nn algorithm was incredibly slow to respond to move requests. Additionally, as eluded to by the invalid precision
 results on some of the cross validation, the majority of responses consisted of holding down the forward and jump buttons continually
-in a manner that prevented Mario from doing more than one jump per level. As such, the KNN classifiers never finished a level. The best
+in a manner that prevented Mario from doing more than one jump per level. As such, the $k$nn classifiers never finished a level. The best
 performance of the classifier was on the simplest level on the lowest difficulty with a weighted fitness of 1488. It was able to make its
 way through 26.9\% of the level.
 
@@ -267,7 +275,7 @@ of each category graphed against each other. It is very interesting to note the 
 whose scores are nearly identical for every configuration. This leads us to believe that both algorithms found the ideal means of separating our data.
 \newline\newline
 As can be seen in Figure 1, REP tree and SVM are indistinguishable and highly successful with simple levels devoid of gaps, blocks or enemies. Random
-forests, KNN and naive Bayes all struggle, with the best and most inconsistent of them being the random forest.
+forests, $k$nn and naive Bayes all struggle, with the best and most inconsistent of them being the random forest.
 \begin{figure}[H]
 \centering
 \includegraphics[width=90mm]{basic.png}
@@ -275,7 +283,7 @@ forests, KNN and naive Bayes all struggle, with the best and most inconsistent o
 \end{figure}
 
 For levels including gaps (Figure 2), REP tree and SVM succeed at the easiest level and remain the most successfull as difficulty increases. Random forest is once again
-very erratic in its performance while KNN and naive Bayes fluctuate but remain the worst performers.
+very erratic in its performance while $k$nn and naive Bayes fluctuate but remain the worst performers.
 \begin{figure}[H]
 \centering
 \includegraphics[width=90mm]{gaps.png}
@@ -302,7 +310,7 @@ and a bit random as can be seen in Figure 4.
 
 The final situation the classifiers were tested on was levels with enemies, blocks and gaps present. As can be seen in Figure 5, the classifiers finally become 
 more stratified than in the previous four examples. SVM and REP tree are still identical and the best overall with a sharp decline for difficulties greater than 1, but 
-random forests now does consistently better than naive Bayes or KNN. As this level is the most like levels that would appear in the real Mario games, this is the most
+random forests now does consistently better than naive Bayes or $k$nn. As this level is the most like levels that would appear in the real Mario games, this is the most
 interesting one to see, and really signifies the difficulty of a learning agent successfully navigating a level.
 \begin{figure}[H]
 \centering
