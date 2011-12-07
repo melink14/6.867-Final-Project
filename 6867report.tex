@@ -1,11 +1,12 @@
 \documentclass[]{article}   % list options between brackets
 \usepackage{}              % list packages between braces
-
-% type user-defined commands here
+\usepackage[english]{babel}
+\usepackage{graphicx}
 
 \begin{document}
 
 \title{Mario: A Machine Learning Classification Approach}   % type title between braces
+
 \author{Erek Speed and Nick Villalva}         % type author(s) between braces
 \date{December 6, 2011}    % type date between braces
 \maketitle
@@ -13,7 +14,6 @@
 \begin{abstract}
  The purpose of this project was to construct a 
 \end{abstract}
-
 
 \section{Introduction}     % section 1
 This project is a departure from the common data sets of the machine learning world. The authors have eschewed corpi and proteins in lew of something a bit closer to their hearts.  To this end, we've repurposed the classification powers of the machine learning world for use with a classic platforming game from our youth, Super Mario Brothers(Mario).  Despite the levity of the topic, the discussion of the algorithms is just as reasonable as the common problems of the field.  Indeed, if we consider the Mario world a rough approximation of our own then it's easy to see the relevance of of studying a simpler version of what some might consider the holy grail of artificial intelligence: human level interaction with arbitrary environments.
@@ -33,20 +33,73 @@ The present work is the first to attemp to solve Mario as a classification probl
 \section{Data Generation}     % section 2.1
 \label{sec:datagen}
 
-
 \section{Classifiers}
-\label{sec:class}
+\subsection{Software}
+\subsubsection{Libraries}
+We considered several libraries for this project and ultimately settled on Java ML \cite{javaml}. Our main requirements were that it support the various classifiers we wished to use, have an implementation of feature selection, and be capable of interfacing with the Mario Benchmarking \cite{mariobenchmark} software. The Mario software was obtained from the MarioAI competition and is written in Java. It allows for the use of players that implement an Agent interface to take in data about the world and push buttons on the controller to move Mario as it sees fit. We looked at using weka \cite{weka}, Java ML \cite{javaml}, scikit-learn \cite{scikit}, and libsvm \cite{libsvm}. 
+
+Weka is a relatively full featured library written in java, and as such was one of the most attractive libraries available. It is well used and contains all of the types of classifiers we hoped to use. The major drawback surrounding the use of weka was the data format it required. Programatically it was rather complicated to setup data on the fly, and translating the datafiles we had already created into the proper format was a taxing proposition. 
+
+Scikit, written in python, was considered due to the ease of data manipulation in python and the fact that both of us were comfortable with the language. The major drawback of this is that we would have to find a way to export all of our classifiers and import them into the java based Mario Benchmarking software. The libsvm integration with scikit was very appealing and was one of the major reasons we considered it.
+
+Libsvm was a great choice because its widespread use and its proficient handling of various multiclass support vector machines. What made us shy away from direct use of libsvm was that all three other libraries had wrappers for libsvm that would allow us to reap its benefits from within a single library that contained all of our classifiers.
+
+We ultimately chose Java ML due to its simple data interface, native java compatibility, and the fact that it wrapped both Weka and libsvm functionality. This enabled us to use libsvm for our support vector classifiers, wrapped Weka classifiers for random forests, na\"{i}ve Bayes, KNN and REP trees, and forward and backwards feature selection. 
 
 \subsection{KNN}
 \subsubsection{Reasons for selection and expectations}
 We chose to include k nearest neighbors as one of our algorithms because we thought that the large search space would help it identify similarities between attributes in our dataset. Hopes were high for the reduced feature sets as they should only be looking at the attributes that have an impact on the action to be taken for a given board configuration.  We expected KNN to train slowly and respond slowly, making it less than ideal for actual play. However, the simplicity of the algorithm would give us a good baseline for what is possible.
+
 \subsubsection{Parameter selection}
 KNN had very few parameters to select – the number, $k$, of neighbors to look at and the distance measure that would be used to find the nearest neighbors. First, due to the scarcity of data for some of our classes, we chose to experiment with $k$ from one to five. We then selected a few distance measures to test – Euclidian, symmetric uncertainty and Jaccard indexing. We then ran a grid search using five-fold cross validation to determine the best set. The metrics we measured to compare the success of classifiers with one another were accuracy, precision, f1 and recall. 
 
 
+\subsection{Na\"{i}ve Bayes}
+\subsubsection{Reason for selection and expectation}
+Na\"{i}ve Bayes was an attractive classifier to use since it allowed for priors, allowed us to view a probability distribution on optimal actions, and yielded classifications relatively quickly. We expected it to perform decently with the full ensemble of data, but really shine with a reduced dataset that hopefully proved to have a better signal to noise ratio. 
+
+\subsubsection{Parameter selection}
+The wrapped implementation of na\"{i}ve Bayes provided by Java ML required very few parameters. We were given the option of using a Laplace correction as a prior and the use of logarithmic results. As our dataset was sparse, we were appreciative of the ability to make the classifier aware of this in order to improve performance. Due to the very limited number of parameters, our grid search for optimal parameters focused on whether or not to include a Laplace correction and the size of dataset on which the classifier was trained. 
+
+\subsection{REP Trees}
+\subsubsection{Reason for selection and expectation}
+REP (Reduced Error Pruning) trees, while not specifically covered in class, were used as a representative of the various tree classsification methods. This algorithm builds a decision/regression tree and internally splits the dataset into folds in order to perform reduced error pruning. The key motivation for including REP trees in our ensemble of classifiers was to have a tree that actively prunes itself as they are purported to be especially good at classifying categorical data. We expected the tree to take longer to train than KNN or na\"{i}ve Bayes, but to respond to requests quickly.
+
+\subsubsection{Parameter selection}
+The REP tree algorithm we utilized required a few parameters -- the minimum number of records per leaf, the number of folds for pruning, and the maximum depth. Due to the size and imbalance of our data, we decided to retain most of the default settings of three folds, no maximum depth and two instances per leaf. Our experimentation with REP trees focused on the amount of data provided for training and its impact on the accuracy of the classifier.
+
+\section{Results}
+
+\begin{table}[h!]
+	\begin{center}
+		\caption{knn cv results}
+		\begin{tabular}{l | l | l | l }
+		a & b & c & d \\
+		\hline
+		1 & 2 & 3 & 4 \\
+		1 & 2 & 3 & 4 \\
+		1 & 2 & 3 & 4 \\
+		\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+\subsubsection{Testing with Mario}
+
+\section{Conclusion}
+
 
 \begin{thebibliography}{9}
   % type bibliography here
+  \bibitem{javaml}
+  Abeel, T.; de Peer, Y. V. \& Saeys, Y. Java-ML: A Machine Learning Library, Journal of Machine Learning Research, 2009, 10, 931-934
+  \bibitem{mariobenchmark}
+  http://www.marioai.org/
+  \bibitem{weka}
+  Mark Hall, Eibe Frank, Geoffrey Holmes, Bernhard Pfahringer, Peter Reutemann, Ian H. Witten (2009); The WEKA Data Mining Software: An Update; SIGKDD Explorations, Volume 11, Issue 1.
+  \bibitem{scikit}
+  scikit has a bibtex
+  \bibitem{libsvm}
+  libsvm has a bibtex
 \end{thebibliography}
 
 \end{document}
