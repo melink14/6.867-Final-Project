@@ -1,5 +1,5 @@
 \documentclass[]{article}   % list options between brackets
-\usepackage{}              % list packages between braces
+\usepackage{float}              % list packages between braces
 \usepackage[english]{babel}
 \usepackage{graphicx}
 
@@ -248,34 +248,73 @@ rest between jumps is discarded with the move from 95\% to 99\%.
 
 \subsection{Overall}
 
-\begin{figure}
-\includegraphics[width=110mm]{basic.png}
+The overall performance of the classifiers is best communicated through graphical representations of the weighted fitness score of the best classifier
+of each category graphed against each other. It is very interesting to note the similarities in performance between the REP tree algorithm and the SVM,
+whose scores are nearly identical for every configuration. This leads us to believe that both algorithms found the ideal means of separating our data.
+
+
+As can be seen in Figure 1, REP tree and SVM are indistinguishable and highly successful with simple levels devoid of gaps, blocks or enemies. Random
+forests, KNN and naive Bayes all struggle, with the best and most inconsistent of them being the random forest.
+\begin{figure}[H]
+\centering
+\includegraphics[width=90mm]{basic.png}
 \caption{Graph of performance on basic levels by classifier}
 \end{figure}
 
-\begin{figure}
-\includegraphics[width=110mm]{gaps.png}
+For levels including gaps (Figure 2), REP tree and SVM succeed at the easiest level and remain the most successfull as difficulty increases. Random forest is once again
+very erratic in its performance while KNN and naive Bayes fluctuate but remain the worst performers.
+\begin{figure}[H]
+\centering
+\includegraphics[width=90mm]{gaps.png}
 \caption{Graph of performance on levels with gaps by classifier}
 \end{figure}
 
-\begin{figure}
-\includegraphics[width=110mm]{enemies.png}
+When enemies are added to the levels, none of the classifiers can successfully navigate a level. As can be seen in Figure 3, the classifiers converge
+to a point for the highest difficulty and the general general trend is a decrease in score as difficulty increases. This suggests that the presence of enemies
+is an equalizer between the usual highly successful REP tree and SVM and the rest of the classifiers.
+\begin{figure}[H]
+\centering
+\includegraphics[width=90mm]{enemies.png}
 \caption{Graph of performance on levels with enemies by classifier}
 \end{figure}
 
-\begin{figure}
-\includegraphics[width=110mm]{enemiesblocks.png}
+When both enemies and blocks are present, all classifiers have an eratic performance. The REP tree and SVM pair are still the best performing overall. Random
+forest shows a bit of promise for the middle difficulties, even doing better than REP trees on level six. Overall, performance with enemies and blocks is unreliable
+and a bit random as can be seen in Figure 4.
+\begin{figure}[H]
+\centering
+\includegraphics[width=90mm]{enemiesblocks.png}
 \caption{Graph of performance on levels with enemies and blocks by classifier}
 \end{figure}
 
-\begin{figure}
-\includegraphics[width=110mm]{enemiesblocksgaps.png}
+The final situation the classifiers were tested on was levels with enemies, blocks and gaps present. As can be seen in Figure 5, the classifiers finally become 
+more stratified than in the previous four examples. SVM and REP tree are still identical and the best overall with a sharp decline for difficulties greater than 1, but 
+random forests now does consistently better than naive Bayes or KNN. As this level is the most like levels that would appear in the real Mario games, this is the most
+interesting one to see, and really signifies the difficulty of a learning agent successfully navigating a level.
+\begin{figure}[H]
+\centering
+\includegraphics[width=90mm]{enemiesblocksgaps.png}
 \caption{Graph of performance on levels with enemies, blocks and gaps by classifier}
 \end{figure}
 
 \section{Future Work}
 
+Having examined the source code of the Java ML library that we used, the implementation of some algorithms was not entirely correct. Unfortunately we realized this with too
+little time to switch to a new library and re-run all of our tests, so the first thing we would do if we were to continue this avenue of exploration would be to validate
+these results using a second library, such as Weka.
+
+Further improvements could be attempted by implementing adjustments for the sampling imbalance of our data, such as the SMOTE algorithm.
+
+Priors could be better enforced by weighting the value of data gathered from nearest Mario higher than that gathered from across the screen. Various examples of this would be
+starting with the weight of Mario's square being 100 and decreasing with weight as a function inversely proportional to the distance from Mario. We attempted to do this in a
+small fashion with the 5x5 dataset, though it would be interesting to see additional approaches.
+
 \section{Conclusion}
+
+Through this exercise, we have determined that at this time, the classifiers we tested are not suitable for playing a level of Mario that contains gaps, blocks or enemies.
+At their best, they are capable of immitating a basic forward jumping agent that continually jumps as it runs across the level. At their worst, classifiers run into walls for
+minutes on end or walk back and forth through the same two squares. Additional work must be done for classifiers to stand a chance against Mario agents programmed to use
+reinforcement learning, genetic algorithms or modified A*.
 
 
 \begin{thebibliography}{9}
@@ -283,13 +322,13 @@ rest between jumps is discarded with the move from 95\% to 99\%.
   \bibitem{javaml}
   Abeel, T.; de Peer, Y. V. \& Saeys, Y. Java-ML: A Machine Learning Library, Journal of Machine Learning Research, 2009, 10, 931-934
   \bibitem{mariobenchmark}
-  http://www.marioai.org/
+  Diego Perez, Miguel Nicolau, Michael O'Neill, Anthony Brabazon: Evolving Behaviour Trees for the Mario AI Competition Using Grammatical Evolution. EvoApplications(1), 2011: 123-132 http://www.marioai.org/
   \bibitem{weka}
-  Mark Hall, Eibe Frank, Geoffrey Holmes, Bernhard Pfahringer, Peter Reutemann, Ian H. Witten (2009); The WEKA Data Mining Software: An Update; SIGKDD Explorations, Volume 11, Issue 1.
+  Mark Hall, Eibe Frank, Geoffrey Holmes, Bernhard Pfahringer, Peter Reutemann, Ian H. Witten; The WEKA Data Mining Software: An Update; SIGKDD Explorations, 2009, Volume 11, Issue 1.
   \bibitem{scikit}
-  scikit has a bibtex
+  Pedregosa, F.; Varoquaux, G. et. al. Scikit-learn: Machine Learning in Python, Journal of Machine Learning Research, 2011, 12, 2825-2830
   \bibitem{libsvm}
-  libsvm has a bibtex
+  Chang, Chih-Chung and Lin, Chih-Jen, {LIBSVM}: A library for support vector machines, ACM Transactions on Intelligent Systems and Technology, 2011, Volume 2, Issue 3, 27:1-27:27
 \end{thebibliography}
 
 \end{document}
