@@ -1,7 +1,7 @@
 \documentclass[]{article}   % list options between brackets
 \usepackage{float}              % list packages between braces
 \usepackage[english]{babel}
-\usepackage{graphicx}
+\usepackage[pdftex]{graphicx}
 
 \begin{document}
 
@@ -50,6 +50,7 @@ The second feature selection optimization is simply one of reasoning.  We realiz
 The final optimization left the feature vector size alone but instead dealt with the problem of noise.  The most advanced Mario agents will sometimes make erratic actions in the interest of exploring the worlds and finding hidden secrets.  The subset of possible environments used for the present work, however, requried very little exploration.  Upon such realiziation, the parameters of observed expert were changed such that almost all erratic behavior was removed.  This allowed nosie sensitive algorithms like SVM to work better.
 
 \section{Classifiers}
+\label{sec:class}
 \subsection{Software}
 \subsubsection{Libraries}
 We considered several libraries for this project and ultimately settled on Java ML \cite{javaml}. Our main 
@@ -140,6 +141,7 @@ Random Forest was our choice for an ensemble classifier.  It's incredibly simple
 The standard parameters for this function are number of trees and number of features to sample.  There is no guiding principle for comprehensive parameter search for these parameteres however so simple heuristics were used.  The number of trees was chosen to be the square root of the data, and the number of dimensions was chosen to be $log_2$ of the dimensionality.
 
 \section{Results}
+\label{sec:results}
 \subsection{Metrics}
 In evaluating our methods we decided to use a combination of accuracy, precision, recall and f1 characteristics to 
 evaluate our cross validation results for KNN, SVM and na\"{i}ve Bayes. As the tree algorithms do not measure these
