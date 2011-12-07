@@ -265,7 +265,7 @@ rest between jumps is discarded with the move from 95\% to 99\%.
 \subsubsection{Cross Validation}
 There was no cross validation of Random Forests but every training is able to produce an out-of-bag error rating which is unbiased.  Unfortunately, no it was nearly impossible to correlate accuracy with any parameter. Due to this variance, a few classifiers were trained with accuracies as high as $.65$ but such classifiers could not be produced with consistency.  Furthermore, the implementation we used was unfortunately not able to cope with large data sizes and thus fewer tweaks were able to be tried.
 \subsubsection{Mario Benchmark}
-While it's not able to meet the standard of some of the other algorithms, it performs at levels well above chance.  Given the mediocre accuracy ratings reported at build time this is not surprising.
+While it's not able to meet the standard of some of the other algorithms, it performs at levels well above chance.  Given the mediocre accuracy ratings reported at build time this is not surprising.  It tends to start levels intelligently, but quickly degrades to simply walking forward thus getting stuck on ledges.
 
 
 \subsection{Overall}
