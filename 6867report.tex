@@ -37,7 +37,7 @@ It is a nice metephor to imagine a untrained novice classifier viewing instance 
 The MarioAI Benchmark \cite{mariobenchmark} was developed in order to facilitate the developing and testing of AI agents.  It placed the original software in a wrapper which the creators felt would allow easier creation of all kinds of agents.  For instance, while the various locations of objects in the world are represented as continuous variables, but the benchmark wraps the low level data in a representation which discretizes the data into a convenient grid like format [figure].  Each cell of the grid contains a integer relating to its contents.  Furthermore, the agent has access to public information outside the grid, including whether it is alive or dead, on the ground, and it's status(size, powers).  Given this information, the agent is expected to return an action which coressponds to the buttons that might be pressed in the original game.  In order to gather data, we use a script which records the state and action pairs generated as a trained agent plays expertly.  By modifying the parameters of generated environments, millions of unique data points can be generated in minutes.
 \subsection{Data Conversion}
 Obviously, the representation has an obvious analog to common formats used in machine learning.  If we consider each grid space as feature then we can use it directly as a feature vector into a learning algorithm.  Furthermore, we can simply append the extra public information to the end to complete the vector.  Unfortunately, while this would be a valid input to most algorithms, the data is certainly not optimal.
-
+\newline\newline
 The first problem is that the values chosen to represnt the contents of each feature are seemingly random.  The scattering of the values are such that it the features appear continous upon first glance.  Unfortunately, upon further inspection it becomes obvious that the specific values a feature may take have no deeper meaning and would lead to poor results in many algorithms requiring placing the vectors in some measured space.  To solve this problem, we identified the possible values and grouped them into 13 cateogories.  For consistent weighting of every discrete value, we also expanded each feature into 13 binary levels.  At this point, the data is ready to be exported for classifier consumption.  Following the example of current software packages, we represented the vectors using a sparse indictor variable.  Using the default settings of the benchmark (19x19 grid) and including a few of the most important state flags we end up with a feature vector in 4697 dimensions.
 
 \subsection{Optimizations}
@@ -59,21 +59,21 @@ Mario software was obtained from the MarioAI competition and is written in Java.
 players that implement an Agent interface to take in data about the world and push buttons on the controller 
 to move Mario as it sees fit. We looked at using weka \cite{weka}, Java ML \cite{javaml}, scikit-learn 
 \cite{scikit}, and libsvm \cite{libsvm}. 
-
+\newline\newline
 Weka is a relatively full featured library written in java, and as such was one of the most attractive libraries 
 available. It is well used and contains all of the types of classifiers we hoped to use. The major drawback 
 surrounding the use of weka was the data format it required. Programatically it was rather complicated to setup 
 data on the fly, and translating the datafiles we had already created into the proper format was a taxing proposition. 
-
+\newline\newline
 Scikit, written in python, was considered due to the ease of data manipulation in python and the fact that both 
 of us were comfortable with the language. The major drawback of this is that we would have to find a way to 
 export all of our classifiers and import them into the java based Mario Benchmarking software. The libsvm 
 integration with scikit was very appealing and was one of the major reasons we considered it.
-
+\newline\newline
 Libsvm was a great choice because its widespread use and its proficient handling of various multiclass support 
 vector machines. What made us shy away from direct use of libsvm was that all three other libraries had wrappers 
 for libsvm that would allow us to reap its benefits from within a single library that contained all of our classifiers.
-
+\newline\newline
 We ultimately chose Java ML due to its simple data interface, native java compatibility, and the fact that it 
 wrapped both Weka and libsvm functionality. This enabled us to use libsvm for our support vector classifiers, 
 wrapped Weka classifiers for random forests, na\"{i}ve Bayes, KNN and REP trees, and forward and backwards feature 
@@ -129,7 +129,7 @@ trees focused on the amount of data provided for training and its impact on the 
 In evaluating our methods we decided to use a combination of accuracy, precision, recall and f1 characteristics to 
 evaluate our cross validation results for KNN, SVM and na\"{i}ve Bayes. As the tree algorithms do not measure these
 statistics, we used root mean squared error as our metric.
-
+\newline\newline
 Similarly, a metric was needed to compare results from runs through the Mario 
 Benchmark. The metrics picked for that were a combination of a weighted fitness score that the benchmarking program 
 calculated and a scalar progress count that represented how far through the level the classifier controlled Mario was 
@@ -208,7 +208,7 @@ Much like the linear svm, none of the nai\"{i}ve Bayes classifiers were able to 
 value found was shared between four different parameter settings. Classifiers trained with the 5x5 dataset with both 5000 and 10,000
 datapoints were capable of scoring a 1913 on the easiest level. Likewise, Classifiers trained on the 5\% and 1\% datasets with 20,000
 datapoints achieved the same score.
-
+\newline\newline
 This alludes to an interesting threshold difference between the reduced datasets and the 5x5 grid data. Reduced datasets required four
 times as many datapoints to achieve the same level of success as the 5x5 grid with a Bayesian classifier. Intuitively this does not make sense,
 as the length of the feature vectors in the 1\% and 5x5 datasets were about the same. 
@@ -251,8 +251,7 @@ rest between jumps is discarded with the move from 95\% to 99\%.
 The overall performance of the classifiers is best communicated through graphical representations of the weighted fitness score of the best classifier
 of each category graphed against each other. It is very interesting to note the similarities in performance between the REP tree algorithm and the SVM,
 whose scores are nearly identical for every configuration. This leads us to believe that both algorithms found the ideal means of separating our data.
-
-
+\newline\newline
 As can be seen in Figure 1, REP tree and SVM are indistinguishable and highly successful with simple levels devoid of gaps, blocks or enemies. Random
 forests, KNN and naive Bayes all struggle, with the best and most inconsistent of them being the random forest.
 \begin{figure}[H]
@@ -302,9 +301,9 @@ interesting one to see, and really signifies the difficulty of a learning agent 
 Having examined the source code of the Java ML library that we used, the implementation of some algorithms was not entirely correct. Unfortunately we realized this with too
 little time to switch to a new library and re-run all of our tests, so the first thing we would do if we were to continue this avenue of exploration would be to validate
 these results using a second library, such as Weka.
-
+\newline\newline
 Further improvements could be attempted by implementing adjustments for the sampling imbalance of our data, such as the SMOTE algorithm.
-
+\newline\newline
 Priors could be better enforced by weighting the value of data gathered from nearest Mario higher than that gathered from across the screen. Various examples of this would be
 starting with the weight of Mario's square being 100 and decreasing with weight as a function inversely proportional to the distance from Mario. We attempted to do this in a
 small fashion with the 5x5 dataset, though it would be interesting to see additional approaches.
