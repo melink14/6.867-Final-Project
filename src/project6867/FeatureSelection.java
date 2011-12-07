@@ -23,7 +23,7 @@ import net.sf.javaml.utils.ContingencyTables;
 
 public class FeatureSelection {
 
-	private static int DATA_SIZE = 500;
+	private static int DATA_SIZE = 1000;
 	private static int FEATURE_SIZE = 4697;
 
 	/**
@@ -32,9 +32,9 @@ public class FeatureSelection {
 	public static void main(String[] args) {
 		Runnable[] runners = new Runnable[3];
 		Thread[] threads = new Thread[3];
-		runners[0] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, 2, FeatureThread.Type.SU);
-		runners[1] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, 10, FeatureThread.Type.SU);
-		runners[2] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, 100, FeatureThread.Type.SU);
+		runners[0] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .9, FeatureThread.Type.SU);
+		runners[1] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .8, FeatureThread.Type.SU);
+		runners[2] = new FeatureThread(DataHandler.getCompositeDataset(DATA_SIZE), FEATURE_SIZE, .5, FeatureThread.Type.SU);
 		for(int i = 0; i < 3; i++){
 			threads[i] = new Thread(runners[i]);
 			threads[i].start();
@@ -148,7 +148,7 @@ public class FeatureSelection {
 
 		
 		public String toString(){
-			return (this.type == Type.FORWARD ? "forward" : (this.type == Type.BACKWARD)? "backward" : "su") + "@" + this.n;
+			return (this.type == Type.FORWARD ? "forward" : (this.type == Type.BACKWARD)? "backward" : "su") + "@" + ((double)this.n)/this.featureSize;
 		}
 	}
 

@@ -105,7 +105,7 @@ public class DataHandler {
 			Matcher m;
 			String s;
 			Instance feature_vector;
-			for(int i = 0; i < 10*numRecords; i++){s = r.readLine(); //while ((s = r.readLine()) != null) {
+			while ((s = r.readLine()) != null && data.size() < 10*numRecords) {
 				m = p.matcher(s);
 				if (m.matches()) {
 					feature_vector = new SparseInstance(FEATURE_SIZE);
@@ -115,7 +115,6 @@ public class DataHandler {
 							int index = Integer.parseInt(idx);
 							feature_vector.put(index, 1.0);
 						}catch(Exception e){
-							i--;
 							continue;
 						}
 					}
@@ -137,9 +136,9 @@ public class DataHandler {
 			BufferedReader r = new BufferedReader(new FileReader(filename));
 			Pattern p = Pattern.compile("(.*)\\s\\{(.*)\\}");
 			Matcher m;
-			String s = "";
+			String s;
 			Instance feature_vector;
-			for(int i = 0; i < 10*numRecords && s != null; i++){s = r.readLine(); //while ((s = r.readLine()) != null) {
+			while ((s = r.readLine()) != null && data.size() < 10*numRecords) {
 				m = p.matcher(s);
 				if (m.matches()) {
 					feature_vector = new SparseInstance(featureCount);
@@ -151,7 +150,6 @@ public class DataHandler {
 								if(mask.containsKey(index))
 									feature_vector.put(mask.get(index), 1.0);
 							}catch(Exception e){
-								i--;
 								continue;
 							}
 						}
