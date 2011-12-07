@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,11 +39,11 @@ public class DataHandler {
 		System.out.println("Started fetching data at " + dateFormat.format(new Date()));
 		Dataset data = new DefaultDataset();
 		DatasetTools.merge(data,
-				loadFile("cleanbasic55.data", numRecords),
-				loadFile("cleanbasicenemies55.data", numRecords),
-				loadFile("cleanbasicgaps55.data", numRecords),
-				loadFile("cleanenemiesblocks55.data", numRecords),
-				loadFile("cleanenemiesblocksgaps55.data", numRecords));
+				loadFile("cleanbasic.data", numRecords),
+				loadFile("cleanbasicenemies.data", numRecords),
+				loadFile("cleanbasicgaps.data", numRecords),
+				loadFile("cleanenemiesblocks.data", numRecords),
+				loadFile("cleanenemiesblocksgaps.data", numRecords));
 		System.out.println("Finished fetching data at " + dateFormat.format(new Date()));
 		return data;
 	}
@@ -105,6 +105,7 @@ public class DataHandler {
 			Matcher m;
 			String s;
 			Instance feature_vector;
+
 			while ((s = r.readLine()) != null && data.size() < 10*numRecords) {
 				m = p.matcher(s);
 				if (m.matches()) {
@@ -138,6 +139,7 @@ public class DataHandler {
 			Matcher m;
 			String s;
 			Instance feature_vector;
+
 			while ((s = r.readLine()) != null && data.size() < 10*numRecords) {
 				m = p.matcher(s);
 				if (m.matches()) {

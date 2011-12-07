@@ -14,7 +14,6 @@ import java.util.Vector;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.Instance;
 import net.sf.javaml.distance.PearsonCorrelationCoefficient;
-import net.sf.javaml.featureselection.ranking.RankingFromScoring;
 import net.sf.javaml.featureselection.scoring.SymmetricalUncertainty;
 import net.sf.javaml.featureselection.subset.GreedyBackwardElimination;
 import net.sf.javaml.featureselection.subset.GreedyForwardSelection;
@@ -22,6 +21,7 @@ import net.sf.javaml.utils.ArrayUtils;
 import net.sf.javaml.utils.ContingencyTables;
 
 public class FeatureSelection {
+
 
 	private static int DATA_SIZE = 1000;
 	private static int FEATURE_SIZE = 4697;
