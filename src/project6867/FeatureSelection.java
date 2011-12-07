@@ -23,7 +23,7 @@ import net.sf.javaml.utils.ContingencyTables;
 
 public class FeatureSelection {
 
-	private static int DATA_SIZE = 500;
+	private static int DATA_SIZE = 5000;
 	private static int FEATURE_SIZE = 4697;
 
 	/**
