@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
 
+import project6867.DataHandler.DataType;
+
 import net.sf.javaml.classification.Classifier;
 import net.sf.javaml.classification.KNearestNeighbors;
 import net.sf.javaml.classification.bayes.NaiveBayesClassifier;
@@ -22,26 +24,25 @@ import net.sf.javaml.classification.evaluation.CrossValidation;
 import net.sf.javaml.classification.evaluation.PerformanceMeasure;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.core.DefaultDataset;
+import net.sf.javaml.distance.EuclideanDistance;
+import net.sf.javaml.featureselection.scoring.SymmetricalUncertainty;
 import net.sf.javaml.tools.weka.WekaClassifier;
 import weka.classifiers.trees.REPTree;
 
 public class ClassifierTrainer {
-	private static int DATA_SIZE = 1000;
-	public static enum DataType{FULL, ONE, FIVE, TEN};
+	private static int DATA_SIZE = 500;
 	public static enum ClassifierType{KNN, NB, ID};
 	
+	public static Classifier getClassifier(ClassifierType classType, DataType dataType, int dataSize){
+		DATA_SIZE = dataSize;
+		return getClassifier(classType, dataType, null);
+	}
+	
 	public static Classifier getClassifier(ClassifierType classType, DataType dataType, Object[] args){
-		Dataset data = new DefaultDataset();
-		switch(dataType){
-			case FULL:	data = DataHandler.getCompositeDataset(DATA_SIZE); break;
-			case ONE:	data = DataHandler.getMaskedCompositeDataset("forward@0.01_5000mixed.data", DATA_SIZE); break;
-			case FIVE:	data = DataHandler.getMaskedCompositeDataset("forward@0.05_5000mixed.data", DATA_SIZE); break;
-			case TEN:	data = DataHandler.getMaskedCompositeDataset("forward@0.1_5000mixed.data", DATA_SIZE); break;
-			default:	data = DataHandler.getMaskedCompositeDataset("forward@0.01_5000mixed.data", DATA_SIZE); break;
-		}
+		Dataset data = DataHandler.getDataset(DATA_SIZE, dataType);
 		Classifier cl;
 		switch(classType){
-			case KNN:	cl = new KNearestNeighbors(3); break;
+			case KNN:	cl = new KNearestNeighbors(3, new JaccardIndex()); break;
 			case NB:	cl = new NaiveBayesClassifier(false, true, true); break;
 			case ID:    
 				REPTree rep = new REPTree();
@@ -57,15 +58,22 @@ public class ClassifierTrainer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		DataHandler dh = new DataHandler();
-		Classifier cl1 = new NaiveBayesClassifier(false, true, true);
-		Classifier cl2 = new NaiveBayesClassifier(false, true, true);
-		Classifier cl3 = new NaiveBayesClassifier(false, true, true);
+		Classifier[] cl = new Classifier[3];
+		for(int i=0; i < 3; i++){
+			REPTree rep = new REPTree();
+			rep.setNoPruning(false);
+			cl[i] = new WekaClassifier(rep);
+		}
+		/*
+		cl[0] = new KNearestNeighbors(3, new JaccardIndex());
+		cl[1] = new KNearestNeighbors(3, new EuclideanDistance());
+		cl[2] = new KNearestNeighbors(3, new JaccardIndex());
+		*/
 		Runnable[] runners = new Runnable[3];
 		Thread[] threads = new Thread[3];
-		runners[0] = new ClassifierThread(cl1, DataHandler.getMaskedCompositeDataset("forward@0.01_5000mixed.data", DATA_SIZE), "NB"+(5*DATA_SIZE/1000)+"k_.01.out");
-		runners[1] = new ClassifierThread(cl2, DataHandler.getMaskedCompositeDataset("forward@0.05_5000mixed.data", DATA_SIZE), "NB"+(5*DATA_SIZE/1000)+"k_.05.out");
-		runners[2] = new ClassifierThread(cl3, DataHandler.getMaskedCompositeDataset("forward@0.1_5000mixed.data", DATA_SIZE), "NB"+(5*DATA_SIZE/1000)+"k_.1.out");
+		runners[0] = new ClassifierThread(cl[0], DataHandler.getDataset(500, DataType.ONE), "ID"+(5*500/1000.0)+"k_.01.out");
+		runners[1] = new ClassifierThread(cl[1], DataHandler.getDataset(500, DataType.FIVE), "ID"+(5*500/1000.0)+"k_.05.out");
+		runners[2] = new ClassifierThread(cl[2], DataHandler.getDataset(500, DataType.TEN), "ID"+(5*500/1000.0)+"k_.10out");
 		for(int i = 0; i < 3; i++){
 			threads[i] = new Thread(runners[i]);
 			threads[i].start();
@@ -105,15 +113,18 @@ public class ClassifierTrainer {
 		public void run() {
 			System.out.println(this.toString() + ":Start at " + dateFormat.format(new Date()));
 			CrossValidation cv = new CrossValidation(this.cl);
-			Map<Object, PerformanceMeasure> pm = cv.crossValidation(this.d, 10);
+			Map<Object, PerformanceMeasure> pm = cv.crossValidation(this.d, 5);
 			try{
 				System.out.println(this.outputFile);
 				BufferedWriter out = new BufferedWriter(new FileWriter(this.outputFile));
 				
 				for(Entry<Object, PerformanceMeasure> e : pm.entrySet()){
-					out.write(e.getKey().toString() + " : " + e.getValue().getPrecision() +
-							"(" + (e.getValue().tp+e.getValue().fn) + "," + (e.getValue().fp + e.getValue().tn) + ")" +
-							"-->" + e.getValue().toString() + "\n");
+					/*
+					out.write(e.getKey().toString() + ", " + e.getValue().getPrecision() + ", " +
+							e.getValue().getAccuracy() + ", " + e.getValue().getFMeasure() + ", " +
+							e.getValue().getRecall() + ", " + e.getValue().toString() + "\n");
+							*/
+					out.write(e.getKey().toString() + ", " + e.getValue().toString() + "\n");
 				}
 				out.flush();
 				out.close();
