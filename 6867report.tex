@@ -1,0 +1,40 @@
+\documentclass[]{report}   % list options between brackets
+\usepackage{}              % list packages between braces
+
+% type user-defined commands here
+
+\begin{document}
+
+\title{Mario: A Machine Learning Classification Approach}   % type title between braces
+\author{Erek Speed and Nick Viallva}         % type author(s) between braces
+\date{December 6, 2011}    % type date between braces
+\maketitle
+
+\begin{abstract}
+ The purpose of this project was to construct a 
+\end{abstract}
+
+
+\section{Introduction}     % section 1.1
+\subsection{History}       % subsection 1.1.1
+
+\section{Introduction}     % section 2.1
+\subsection{Usage}         % subsection 2.1.1
+
+\section{Classifiers}
+\subsection{KNN}
+\subsubsection{Reasons for selection and expectations}
+We chose to include k nearest neighbors as one of our algorithms because we thought that the large search space would help it identify similarities between attributes in our dataset. Hopes were high for the reduced feature sets as they should only be looking at the attributes that have an impact on the action to be taken for a given board configuration.  We expected KNN to train slowly and respond slowly, making it less than ideal for actual play. However, the simplicity of the algorithm would give us a good baseline for what is possible.
+\subsubsection{Parameter selection}
+KNN had very few parameters to select – the number, $k$, of neighbors to look at and the distance measure that would be used to find the nearest neighbors. First, due to the scarcity of data for some of our classes, we chose to experiment with $k$ from one to five. We then selected a few distance measures to test – Euclidian, symmetric uncertainty and Jaccard indexing. We then ran a grid search using five-fold cross validation to determine the best set. The metrics we measured to compare the success of classifiers with one another were accuracy, precision, f1 and recall. 
+\begin{tabular}{l | l | l | l }
+
+\end{tabular}
+
+
+
+\begin{thebibliography}{9}
+  % type bibliography here
+\end{thebibliography}
+
+\end{document}
