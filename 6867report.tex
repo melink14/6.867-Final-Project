@@ -94,6 +94,14 @@ experiment with $k$ from one to five. We then selected a few distance measures t
 and Jaccard indexing. We then ran a grid search using five-fold cross validation to determine the best set. The metrics 
 we measured to compare the success of classifiers with one another were accuracy, precision, f1 and recall. 
 
+\subsection{SVM}
+\subsubsection{Reason for selection and expectation}
+SVMs are considered amongst the best methods for dealing with extremely high dimensional data.  While not as tailored toward multi-class algorithms like Mario, the most popular SVM implementation featured multi-class support.  
+
+The expectation was that SVMs would be able to handle the data best unadultered, but without an easy way to visualize the data it's hard to predict possilbe difficulties.
+\subsubsection{Parameter Selection}
+Grid Search is expensive for multiclass SVMs but it's simplicity allowed for a parallel implementation which excused the naive algorithm.  A standard search for C and gamma with an RBF kernel was done with 6 values for each parameter. A second search for C values for linear kernel was also done over 6 parameters.  Performance was tested with 2-fold cross validation. This is a valid choice due to the large data size.
+
 
 \subsection{Na\"{i}ve Bayes}
 \subsubsection{Reason for selection and expectation}
@@ -123,6 +131,13 @@ The REP tree algorithm we utilized required a few parameters -- the minimum numb
 of folds for pruning, and the maximum depth. Due to the size and imbalance of our data, we decided to retain most 
 of the default settings of three folds, no maximum depth and two instances per leaf. Our experimentation with REP 
 trees focused on the amount of data provided for training and its impact on the accuracy of the classifier.
+
+\subsection{Random Forest}
+\subsubsection{Reason for selection and expectation}
+Random Forest was our choice for an ensemble classifier.  It's incredibly simple to implement which means it was found in almost every library.  We expected above average performance due to how well trees preform on categorization without applying sometimes arbitrary metrics.  Moreover, we were encouraged by reports of how well this algorithm handled large datasets.
+
+\subsubsection{Parameter selection}
+The standard parameters for this function are number of trees and number of features to sample.  There is no guiding principle for comprehensive parameter search for these parameteres however so simple heuristics were used.  The number of trees was chosen to be the square root of the data, and the number of dimensions was chosen to be $log_2$ of the dimensionality.
 
 \section{Results}
 \subsection{Metrics}
@@ -171,16 +186,13 @@ way through 26.9\% of the level.
 Cross validation for our support vector machines was done with two-fold validation, as the size of our datasets made 
 it very costly time-wise to perform more than two-fold validation. A grid search was done for parameters using both linear
 and RBF kernels. The best linear svm was produced by $C = .01$ with a score of $0.9842$, and the best RBF svm was produced by
-$\gamma = .5$ and $C = 10$ with a score of $0.6999$.
+$\gamma = .5$ and $C = 10$ with a score of $0.59$. The scores given here are f1 measures.
 
 \subsubsection{Mario Benchmark}
-The performance of our trained SVMs on the benchmark was rather interesting. With data reduction of 99\% (the 1\% dataset), the support
+With data reduction of 99\% (the 1\% dataset), the support
 vector machine was incapable of learning to pass the simplest level which requires running forward and jumping. It consistently
 collided with a ledge and got stuck until time ran out. With data reductions of 95\% or less, the SVM was capable of learning to
-run forward and jump repeatedly, allowing it to pass the simplest levels. The RBF svm identified by cross validation finished every
-level that contained no gaps, enemies or blocks, and was capable of finishing the easiest level that included gaps. The linear svm
-identified by cross validation was unable to complete a level in spite of its superior cross validation results. Behaviorally, it
-never let go of the jump button and therefor Mario was unable to jump after his first hop.
+run forward and jump repeatedly, allowing it to pass the simplest levels.  Both the linear and RBF SVMs finished completed levels that contained no gaps, enemies or blocks, and was capable of finishing the easiest level that included gaps. However if the dataset size was reduced to 5000, then it reverted to it's previous subpar performance.  
 
 \subsection{Na\"{i}ve Bayes}
 \subsubsection{Cross Validation}
@@ -243,8 +255,10 @@ rest between jumps is discarded with the move from 95\% to 99\%.
 
 \subsection{Random Forests}
 \subsubsection{Cross Validation}
-
+There was no cross validation of Random Forests but every training is able to produce an out-of-bag error rating which is unbiased.  Unfortunately, no it was nearly impossible to correlate accuracy with any parameter. Due to this variance, a few classifiers were trained with accuracies as high as $.65$ but such classifiers could not be produced with consistency.  Furthermore, the implementation we used was unfortunately not able to cope with large data sizes and thus fewer tweaks were able to be tried.
 \subsubsection{Mario Benchmark}
+While it's not able to meet the standard of some of the other algorithms, it performs at levels well above chance.
+
 
 \subsection{Overall}
 
